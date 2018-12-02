@@ -1,11 +1,14 @@
 const connpass = require('connpass');
 const utils = require('./utils');
 
-const TERM = 30;
-
 async function main() {
   try {
-    const options = { order: 2, count: 100, ymd: utils.daysFromToday(TERM).join(',') };
+    console.log(utils.daysFromToday(TERM).join(','));
+    const options = {
+      order: 2,
+      count: 100,
+      ymd: utils.daysFromToday(new Date(), 30).join(','),
+    };
     const res = await connpass.get(options);
     const { results_returned, results_available, events } = res;
     console.log(results_available);
