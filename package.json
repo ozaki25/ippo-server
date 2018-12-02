@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "apollo-server-lambda": "^2.2.5",
+    "connpass": "^0.1.0",
     "graphql": "^14.0.2"
   },
   "scripts": {
