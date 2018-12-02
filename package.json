@@ -3,15 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "LOCAL=true node graphql.js",
+    "test": "jest --verbose"
+  },
   "dependencies": {
     "apollo-server-lambda": "^2.2.5",
     "connpass": "^0.1.0",
+    "dayjs": "^1.7.7",
     "graphql": "^14.0.2"
   },
-  "scripts": {
-    "start": "LOCAL=true node graphql.js"
-  },
   "devDependencies": {
-    "apollo-server": "^2.2.5"
+    "apollo-server": "^2.2.5",
+    "jest": "^23.6.0"
   }
 }
