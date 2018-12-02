@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "LOCAL=true node graphql.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "deploy": "serverless deploy"
   },
   "dependencies": {
     "apollo-server-lambda": "^2.2.5",
