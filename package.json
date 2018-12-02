@@ -8,6 +8,9 @@
     "graphql": "^14.0.2"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "LOCAL=true node graphql.js"
+  },
+  "devDependencies": {
+    "apollo-server": "^2.2.5"
   }
 }
