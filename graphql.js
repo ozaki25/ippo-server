@@ -15,6 +15,7 @@ const typeDefs = gql`
     results_start: Int
   }
   type Event {
+    event_id: Int
     title: String
     catch: String
     description: String
