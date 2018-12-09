@@ -8,6 +8,9 @@ const typeDefs = gql`
     count: Int
     connpass: Connpass
   }
+  type Mutation {
+    subscriber(token: String): subscriber
+  }
   type Connpass {
     events: [Event]
     results_returned: Int
@@ -22,6 +25,9 @@ const typeDefs = gql`
     event_url: String
     address: String
     place: String
+  }
+  type Subscriber {
+    token: String
   }
 `;
 
