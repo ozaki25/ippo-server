@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "LOCAL=true node graphql.js",
+    "start": "AWS_SDK_LOAD_CONFIG=true LOCAL=true node graphql.js",
     "test": "jest --verbose",
     "deploy": "serverless deploy"
   },
