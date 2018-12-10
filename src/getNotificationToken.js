@@ -9,21 +9,17 @@ const params = {
 const scan = params =>
   dynamo.scan(params, function(err, data) {
     if (err) {
-      console.log('dynamo_err:', { err });
+      console.log('getNotificationToken', 'dynamo_err:', { err });
     } else {
-      console.log('dynamo_data:', { data });
-      return data;
+      console.log('getNotificationToken', 'dynamo_data:', { data });
     }
   });
 
-function main(target) {
+async function main(target) {
   if (target === 'all') {
-    const {
-      data: { items },
-    } = scan(params);
-    return items;
+    const { Items } = await scan(params).promise();
+    return Items;
   }
-  return;
 }
 
 module.exports = main;

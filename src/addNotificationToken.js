@@ -10,9 +10,9 @@ const params = token => ({
 const put = params =>
   dynamo.put(params, (err, data) => {
     if (err) {
-      console.log('dynamo_err:', { err });
+      console.log('addNotificationToken', 'dynamo_err:', { err });
     } else {
-      console.log('dynamo_data:', { data });
+      console.log('addNotificationToken', 'dynamo_data:', { data });
     }
   });
 
