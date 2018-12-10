@@ -2,6 +2,7 @@ const isLocal = process.env.LOCAL;
 const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apollo-server-lambda');
 const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const addNotificationToken = require('./src/addNotificationToken');
+const publishNotification = require('./src/publishNotification');
 
 const typeDefs = gql`
   type Query {
@@ -11,6 +12,7 @@ const typeDefs = gql`
   }
   type Mutation {
     registerNotification(token: String): Subscriber
+    publishNotification(target: String): [Subscriber]
   }
   type Connpass {
     events: [Event]
@@ -40,6 +42,7 @@ const resolvers = {
   },
   Mutation: {
     registerNotification: (root, { token }) => addNotificationToken(token),
+    publishNotification: (root, { target }) => publishNotification(target),
   },
 };
 
