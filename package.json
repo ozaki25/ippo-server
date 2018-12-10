@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "apollo-server-lambda": "^2.2.5",
+    "aws-sdk": "^2.373.0",
     "connpass": "^0.1.0",
     "dayjs": "^1.7.7",
     "graphql": "^14.0.2"
