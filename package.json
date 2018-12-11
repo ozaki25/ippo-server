@@ -4,13 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "AWS_SDK_LOAD_CONFIG=true LOCAL=true node graphql.js",
+    "start": "LOCAL=true node graphql.js",
     "test": "jest --verbose",
     "deploy": "serverless deploy"
   },
   "dependencies": {
     "apollo-server-lambda": "^2.2.5",
-    "aws-sdk": "^2.373.0",
     "axios": "^0.18.0",
     "connpass": "^0.1.0",
     "dayjs": "^1.7.7",

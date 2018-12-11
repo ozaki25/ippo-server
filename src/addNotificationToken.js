@@ -1,23 +1,12 @@
-const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
-const table = 'Subscriber';
+const axios = require('axios');
+const notification = require('./constants/notification');
 
-const params = token => ({
-  TableName: table,
-  Item: { token },
-});
-
-const put = params =>
-  dynamo.put(params, (err, data) => {
-    if (err) {
-      console.log('addNotificationToken', 'dynamo_err:', { err });
-    } else {
-      console.log('addNotificationToken', 'dynamo_data:', { data });
-    }
-  });
-
-function main(token) {
-  put(params(token));
+async function main(token) {
+  const {
+    register: { url, params, options },
+  } = notification;
+  const res = await axios.post(url(token), params, options).catch(console.log);
+  return { result: res.statusText };
 }
 
 module.exports = main;
