@@ -28,6 +28,8 @@ const typeDefs = gql`
     event_url: String
     address: String
     place: String
+    started_at: String
+    ended_at: String
   }
   type Subscriber {
     token: String
