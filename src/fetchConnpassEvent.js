@@ -8,8 +8,9 @@ const options = {
   // ym: utils.formattedYearAndMonth({ base: new Date(), term: 2 }).join(','),
 };
 
-async function main() {
+async function main(searchQuery) {
   try {
+    console.log(searchQuery);
     return connpass.get(options);
   } catch (e) {
     console.log(e);
