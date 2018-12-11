@@ -9,7 +9,11 @@ const options = {
 };
 
 async function main() {
-  return connpass.get(options).catch(console.log);
+  try {
+    return connpass.get(options);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 module.exports = main;
