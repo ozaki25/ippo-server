@@ -1,23 +1,23 @@
-const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
-const table = 'Subscriber';
+const axios = require('axios');
 
-const params = token => ({
-  TableName: table,
-  Item: { token },
-});
+const topicName = 'ippo';
+const SERVER_KEY = process.env.SERVER_KEY;
 
-const put = params =>
-  dynamo.put(params, (err, data) => {
-    if (err) {
-      console.log('addNotificationToken', 'dynamo_err:', { err });
-    } else {
-      console.log('addNotificationToken', 'dynamo_data:', { data });
-    }
-  });
+const registerTopicUrl = token =>
+  `https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topicName}`;
 
-function main(token) {
-  put(params(token));
+const options = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `key=${SERVER_KEY}`,
+  },
+};
+
+const registerTopic = token => axios.post(registerTopicUrl(token), {}, options).catch(console.log);
+
+async function main(token) {
+  const res = await registerTopic(token);
+  return { result: res.statusText };
 }
 
 module.exports = main;

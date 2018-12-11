@@ -1,18 +1,17 @@
 const axios = require('axios');
-const getNotificationToken = require('./getNotificationToken');
 
+const topicName = 'ippo';
 const SERVER_KEY = process.env.SERVER_KEY;
-
 const url = 'https://fcm.googleapis.com/fcm/send';
 
-const params = token => ({
+const params = to => ({
   notification: {
     title: '新着イベント',
     body: '新しい勉強会が公開されています',
     click_action: 'http://ippo.netlify.com/#/events/',
     icon: 'https://ippo.netlify.com/icon.png',
   },
-  to: token,
+  to,
 });
 
 const options = {
@@ -22,12 +21,12 @@ const options = {
   },
 };
 
-const publish = ({ token }) => axios.post(url, params(token), options).catch(console.log);
+const publishTopic = () =>
+  axios.post(url, params(`/topics/${topicName}`), options).catch(console.log);
 
-async function main(target) {
-  const tokenList = await getNotificationToken(target);
-  tokenList.forEach(publish);
-  return { result: 'Complete!' };
+async function main() {
+  const res = await publishTopic();
+  return { result: res.statusText };
 }
 
 module.exports = main;
