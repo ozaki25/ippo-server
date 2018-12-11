@@ -1,11 +1,11 @@
 const axios = require('axios');
 const notification = require('./constants/notification');
 
-const registerTopic = token =>
-  axios.post(notification.registerTopicUrl(token), {}, notification.options).catch(console.log);
-
 async function main(token) {
-  const res = await registerTopic(token);
+  const {
+    register: { url, params, options },
+  } = notification;
+  const res = await axios.post(url(token), params, options).catch(console.log);
   return { result: res.statusText };
 }
 

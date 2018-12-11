@@ -1,11 +1,11 @@
 const axios = require('axios');
 const notification = require('./constants/notification');
 
-const publishTopic = () =>
-  axios.post(notification.publishUrl, notification.params, notification.options).catch(console.log);
-
 async function main() {
-  const res = await publishTopic();
+  const {
+    publish: { url, params, options },
+  } = notification;
+  const res = await axios.post(url, params, options).catch(console.log);
   return { result: res.statusText };
 }
 

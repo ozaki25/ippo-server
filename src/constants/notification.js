@@ -2,18 +2,6 @@ const serverKey = process.env.SERVER_KEY;
 
 const topicName = 'ippo';
 
-const registerTopicUrl = token =>
-  `https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topicName}`;
-
-const publishUrl = 'https://fcm.googleapis.com/fcm/send';
-
-const headersOption = {
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `key=${serverKey}`,
-  },
-};
-
 const notificationContents = {
   notification: {
     title: '新着イベント',
@@ -27,20 +15,33 @@ const destination = {
   to: `/topics/${topicName}`,
 };
 
-const options = {
-  ...headersOption,
+const headersOption = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `key=${serverKey}`,
+  },
 };
 
-const params = {
-  ...notificationContents,
-  ...destination,
+const register = {
+  url: token => `https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topicName}`,
+  params: {},
+  options: {
+    ...headersOption,
+  },
+};
+
+const publish = {
+  url: 'https://fcm.googleapis.com/fcm/send',
+  params: {
+    ...notificationContents,
+    ...destination,
+  },
+  options: {
+    ...headersOption,
+  },
 };
 
 module.exports = {
-  serverKey,
-  topicName,
-  publishUrl,
-  registerTopicUrl,
-  options,
-  params,
+  register,
+  publish,
 };
