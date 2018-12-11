@@ -21,7 +21,7 @@ const options = {
   },
 };
 
-const publish = async ({ token }) => axios.post(url, params(token), options).catch(console.log);
+const publish = ({ token }) => axios.post(url, params(token), options).catch(console.log);
 
 async function main(target) {
   const tokenList = await getNotificationToken(target);
