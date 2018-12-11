@@ -9,7 +9,7 @@ const params = token => ({
   notification: {
     title: '新着イベント',
     body: '新しい勉強会が公開されています',
-    click_action: 'http://development--ippo.netlify.com/#/events/',
+    click_action: 'http://ippo.netlify.com/#/events/',
   },
   to: token,
 });
