@@ -17,7 +17,7 @@ const put = params =>
   });
 
 function main(token) {
-  return put(params(token));
+  put(params(token));
 }
 
 module.exports = main;

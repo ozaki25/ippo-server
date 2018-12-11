@@ -7,9 +7,9 @@ const url = 'https://fcm.googleapis.com/fcm/send';
 
 const params = token => ({
   notification: {
-    title: '新着イベントの通知',
+    title: '新着イベント',
     body: '新しい勉強会が公開されています',
-    click_action: 'http://localhost:3000/#/events/',
+    click_action: 'http://ippo.netlify.com/#/events/',
   },
   to: token,
 });
@@ -21,11 +21,12 @@ const options = {
   },
 };
 
-const publish = async ({ token }) => axios.post(url, params(token), options).catch(console.log);
+const publish = ({ token }) => axios.post(url, params(token), options).catch(console.log);
 
 async function main(target) {
   const tokenList = await getNotificationToken(target);
   tokenList.forEach(publish);
+  return { result: 'Complete!' };
 }
 
 module.exports = main;
