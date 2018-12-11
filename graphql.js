@@ -11,8 +11,8 @@ const typeDefs = gql`
     connpass: Connpass
   }
   type Mutation {
-    registerNotification(token: String): Subscriber
-    publishNotification(target: String): [Subscriber]
+    registerNotification(token: String): String
+    publishNotification(target: String): Publish
   }
   type Connpass {
     events: [Event]
@@ -33,6 +33,9 @@ const typeDefs = gql`
   }
   type Subscriber {
     token: String
+  }
+  type Publish {
+    result: String
   }
 `;
 
