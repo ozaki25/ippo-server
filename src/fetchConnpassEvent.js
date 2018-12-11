@@ -3,7 +3,7 @@ const utils = require('./utils');
 
 const options = {
   order: 3,
-  count: 100,
+  count: 30,
   // ymd: utils.formattedDates({ base: new Date(), term: 30 }).join(','),
   // ym: utils.formattedYearAndMonth({ base: new Date(), term: 2 }).join(','),
 };
