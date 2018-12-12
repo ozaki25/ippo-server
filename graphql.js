@@ -43,11 +43,11 @@ const resolvers = {
   Query: {
     hello: () => 'Hello World',
     count: () => Math.floor(Math.random() * 10),
-    connpass: async ({ searchQuery }) => await fetchConnpassEvents(searchQuery),
+    connpass: (_, { searchQuery }) => fetchConnpassEvents(searchQuery),
   },
   Mutation: {
-    registerNotification: (root, { token }) => addNotificationToken(token),
-    publishNotification: (root, { target }) => publishNotification(target),
+    registerNotification: (_, { token }) => addNotificationToken(token),
+    publishNotification: (_, { target }) => publishNotification(target),
   },
 };
 
