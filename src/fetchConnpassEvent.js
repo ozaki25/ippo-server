@@ -1,18 +1,19 @@
 const connpass = require('connpass');
 const utils = require('./utils');
 
-const options = ({ keyword }) => ({
+const options = ({ keyword, start = 1, count = 10 }) => ({
   order: 3,
-  count: 10,
+  count,
   keyword,
+  start,
   // ymd: utils.formattedDates({ base: new Date(), term: 30 }).join(','),
   // ym: utils.formattedYearAndMonth({ base: new Date(), term: 2 }).join(','),
 });
 
-async function main(searchQuery) {
+async function main({ searchQuery, page, count }) {
   try {
-    console.log({ searchQuery });
-    return connpass.get(options({ keyword: searchQuery }));
+    console.log({ searchQuery, page, count });
+    return connpass.get(options({ keyword: searchQuery, start: (page - 1) * count + 1, count }));
   } catch (e) {
     console.log(e);
   }
