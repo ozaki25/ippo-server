@@ -8,7 +8,7 @@ const typeDefs = gql`
   type Query {
     hello: String
     count: Int
-    connpass: Connpass
+    connpass(searchQuery: String): Connpass
   }
   type Mutation {
     registerNotification(token: String): Subscribe
@@ -43,11 +43,11 @@ const resolvers = {
   Query: {
     hello: () => 'Hello World',
     count: () => Math.floor(Math.random() * 10),
-    connpass: async () => await fetchConnpassEvents(),
+    connpass: (_, { searchQuery }) => fetchConnpassEvents(searchQuery),
   },
   Mutation: {
-    registerNotification: (root, { token }) => addNotificationToken(token),
-    publishNotification: (root, { target }) => publishNotification(target),
+    registerNotification: (_, { token }) => addNotificationToken(token),
+    publishNotification: (_, { target }) => publishNotification(target),
   },
 };
 
