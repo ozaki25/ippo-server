@@ -3,6 +3,7 @@ const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apol
 const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const addNotificationToken = require('./src/addNotificationToken');
 const publishNotification = require('./src/publishNotification');
+const addEvent = require('./src/addEvent');
 
 const typeDefs = gql`
   type Query {
@@ -59,9 +60,7 @@ const resolvers = {
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
-    createEvent: (_, { event }) => ({
-      result: JSON.stringify(event),
-    }),
+    createEvent: (_, { event }) => addEvent(event),
   },
 };
 
