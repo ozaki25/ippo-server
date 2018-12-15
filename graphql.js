@@ -4,12 +4,14 @@ const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const addNotificationToken = require('./src/addNotificationToken');
 const publishNotification = require('./src/publishNotification');
 const addEvent = require('./src/addEvent');
+const fetchInternalEvents = require('./src/fetchInternalEvent');
 
 const typeDefs = gql`
   type Query {
     hello: String
     count: Int
     connpass(searchQuery: String, page: Int, count: Int): Connpass
+    internalEvents: [InternalEvent]
   }
   type Mutation {
     registerNotification(token: String): Subscribe
@@ -32,6 +34,14 @@ const typeDefs = gql`
     place: String
     started_at: String
     ended_at: String
+  }
+  type InternalEvent {
+    id: String
+    title: String
+    catchMessage: String
+    place: String
+    startedAt: String
+    endedAt: String
   }
   type Subscribe {
     result: String
@@ -56,6 +66,7 @@ const resolvers = {
     hello: () => 'Hello World',
     count: () => Math.floor(Math.random() * 10),
     connpass: (_, props) => fetchConnpassEvents(props),
+    internalEvents: () => fetchInternalEvents(),
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
