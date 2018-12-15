@@ -13,6 +13,7 @@ const typeDefs = gql`
   type Mutation {
     registerNotification(token: String): Subscribe
     publishNotification(target: String): Publish
+    createEvent(event: inputEvent): CreateEvent
   }
   type Connpass {
     events: [Event]
@@ -37,6 +38,16 @@ const typeDefs = gql`
   type Publish {
     result: String
   }
+  type CreateEvent {
+    result: String
+  }
+  input inputEvent {
+    title: String
+    catchMessage: String
+    place: String
+    startedAt: String
+    endedAt: String
+  }
 `;
 
 const resolvers = {
@@ -48,6 +59,9 @@ const resolvers = {
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
+    createEvent: (_, { event }) => ({
+      result: JSON.stringify(event),
+    }),
   },
 };
 
