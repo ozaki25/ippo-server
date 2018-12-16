@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
+const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'InternalEvents';
 
