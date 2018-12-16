@@ -3,7 +3,14 @@ const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'InternalEvents';
 
-const generateId = () => Date.now().toString();
+const generateId = () =>
+  [...Array(8)]
+    .map(() =>
+      Math.random()
+        .toString(36)
+        .slice(-8),
+    )
+    .join('');
 
 const params = event => ({
   TableName: tableName,
@@ -11,14 +18,18 @@ const params = event => ({
 });
 
 const put = params =>
-  dynamo.put(params, (err, data) => {
+  dynamo.put(params, function(err, data) {
     console.log({ data }, { err });
   });
 
 async function main(event) {
-  const { response } = await put(params(event));
-  console.log(response.error);
-  return { result: response.error || 'OK' };
+  try {
+    const response = await put(params(event)).promise();
+    return { result: 'OK' };
+  } catch (e) {
+    console.log(e);
+    return { result: e };
+  }
 }
 
 module.exports = main;
