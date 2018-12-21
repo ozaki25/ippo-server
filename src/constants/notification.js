@@ -5,8 +5,8 @@ const topicName = 'ippo';
 const notificationContents = {
   notification: {
     title: '新着イベント',
-    body: '新しい勉強会が公開されています',
-    click_action: 'http://ippo.netlify.com/#/events/',
+    body: '新しいイベントが公開されています',
+    click_action: 'http://ippo.netlify.com/',
     icon: 'https://ippo.netlify.com/icon.png',
   },
 };
