@@ -14,7 +14,7 @@ const formattedYearAndMonth = ({ target, term }) =>
       .format('YYYYMM'),
   );
 
-const generateId = () => new Date().toString();
+const generateId = () => Date.now().toString();
 
 module.exports = {
   formattedDates,
