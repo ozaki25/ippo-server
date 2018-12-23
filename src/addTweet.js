@@ -6,7 +6,7 @@ const tableName = 'Tweets';
 
 const params = tweet => ({
   TableName: tableName,
-  Item: { id: utils.generateId(), ...tweet, ...(tweet.hashtag ? { hashtag: 'none' } : {}) },
+  Item: { id: utils.generateId(), ...tweet, ...(!tweet.hashtag && { hashtag: 'none' }) },
 });
 
 const put = params =>

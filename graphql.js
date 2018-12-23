@@ -20,7 +20,7 @@ const typeDefs = gql`
     registerNotification(token: String): Subscribe
     publishNotification(target: String): Publish
     createEvent(event: inputEvent): CreateEvent
-    createTweet(teet: inputTweet): CreateTweet
+    createTweet(tweet: inputTweet): CreateTweet
   }
   type Connpass {
     events: [Event]
@@ -94,8 +94,8 @@ const resolvers = {
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
+    createTweet: (_, { tweet }) => addTweet(tweet),
     createEvent: (_, { event }) => addEvent(event),
-    createTweet: (_, { tweet }) => addEvent(tweet),
   },
 };
 
