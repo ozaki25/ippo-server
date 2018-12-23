@@ -44,6 +44,7 @@ const typeDefs = gql`
     title: String
     catchMessage: String
     place: String
+    hashtag: String
     startedAt: String
     endedAt: String
   }
@@ -70,6 +71,7 @@ const typeDefs = gql`
     title: String
     catchMessage: String
     place: String
+    hashtag: String
     startedAt: String
     endedAt: String
   }
