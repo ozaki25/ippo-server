@@ -1,10 +1,12 @@
 const isLocal = process.env.LOCAL;
 const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apollo-server-lambda');
-const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const addNotificationToken = require('./src/addNotificationToken');
-const publishNotification = require('./src/publishNotification');
 const addEvent = require('./src/addEvent');
+const addTweet = require('./src/addTweet');
+const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const fetchInternalEvents = require('./src/fetchInternalEvent');
+const fetchTweets = require('./src/fetchTweets');
+const publishNotification = require('./src/publishNotification');
 
 const typeDefs = gql`
   type Query {
@@ -12,11 +14,13 @@ const typeDefs = gql`
     count: Int
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
+    tweets(hashtag: String, limit: Int, startId: String): [Tweet]
   }
   type Mutation {
     registerNotification(token: String): Subscribe
     publishNotification(target: String): Publish
     createEvent(event: inputEvent): CreateEvent
+    createTweet(teet: inputTweet): CreateTweet
   }
   type Connpass {
     events: [Event]
@@ -43,6 +47,13 @@ const typeDefs = gql`
     startedAt: String
     endedAt: String
   }
+  type Tweet {
+    id: String
+    hashtag: String
+    name: String
+    text: String
+    time: String
+  }
   type Subscribe {
     result: String
   }
@@ -52,12 +63,21 @@ const typeDefs = gql`
   type CreateEvent {
     result: String
   }
+  type CreateTweet {
+    result: String
+  }
   input inputEvent {
     title: String
     catchMessage: String
     place: String
     startedAt: String
     endedAt: String
+  }
+  input inputTweet {
+    hashtag: String
+    name: String
+    text: String
+    time: String
   }
 `;
 
@@ -67,11 +87,13 @@ const resolvers = {
     count: () => Math.floor(Math.random() * 10),
     connpass: (_, props) => fetchConnpassEvents(props),
     internalEvents: () => fetchInternalEvents(),
+    tweets: (_, props) => fetchTweets(props),
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
     createEvent: (_, { event }) => addEvent(event),
+    createTweet: (_, { tweet }) => addEvent(tweet),
   },
 };
 
