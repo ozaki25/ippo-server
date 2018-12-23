@@ -1,5 +1,4 @@
 const dayjs = require('dayjs');
-const perf_hooks = require('perf_hooks');
 
 const formattedDates = ({ target, term }) =>
   [...Array(term)].map((_, i) =>
@@ -15,7 +14,7 @@ const formattedYearAndMonth = ({ target, term }) =>
       .format('YYYYMM'),
   );
 
-const generateId = () => (perf_hooks.performance.now() * 10000000000000).toString();
+const generateId = () => new Date().toString();
 
 module.exports = {
   formattedDates,
