@@ -7,6 +7,7 @@ const addUser = require('./src/addUser');
 const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const fetchInternalEvents = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
+const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
 
 const typeDefs = gql`
@@ -23,6 +24,7 @@ const typeDefs = gql`
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
+    fetchUser(uid: String): User
   }
   type Connpass {
     events: [Event]
@@ -58,8 +60,8 @@ const typeDefs = gql`
     time: String
   }
   type User {
-    id: String
-    name: String
+    uid: String
+    displayName: String
   }
   type Subscribe {
     result: String
@@ -91,8 +93,8 @@ const typeDefs = gql`
     time: String
   }
   input inputUser {
-    id: String
-    name: String
+    uid: String
+    displayName: String
   }
 `;
 
@@ -110,6 +112,7 @@ const resolvers = {
     createTweet: (_, { tweet }) => addTweet(tweet),
     createEvent: (_, { event }) => addEvent(event),
     createUser: (_, { user }) => addUser(user),
+    fetchUser: (_, { uid }) => fetchUser(uid),
   },
 };
 
