@@ -3,9 +3,11 @@ const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apol
 const addNotificationToken = require('./src/addNotificationToken');
 const addEvent = require('./src/addEvent');
 const addTweet = require('./src/addTweet');
+const addUser = require('./src/addUser');
 const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const fetchInternalEvents = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
+const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
 
 const typeDefs = gql`
@@ -14,13 +16,15 @@ const typeDefs = gql`
     count: Int
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
-    tweets(hashtag: String, limit: Int, startId: String): [Tweet]
+    tweets(hashtag: String, limit: Int, startId: String): TweetList
   }
   type Mutation {
     registerNotification(token: String): Subscribe
     publishNotification(target: String): Publish
     createEvent(event: inputEvent): CreateEvent
-    createTweet(teet: inputTweet): CreateTweet
+    createTweet(tweet: inputTweet): CreateTweet
+    createUser(user: inputUser): CreateUser
+    fetchUser(uid: String): User
   }
   type Connpass {
     events: [Event]
@@ -48,12 +52,20 @@ const typeDefs = gql`
     startedAt: String
     endedAt: String
   }
+  type TweetList {
+    tweetList: [Tweet]
+    startId: String
+  }
   type Tweet {
     id: String
     hashtag: String
     name: String
     text: String
     time: String
+  }
+  type User {
+    uid: String
+    displayName: String
   }
   type Subscribe {
     result: String
@@ -67,6 +79,9 @@ const typeDefs = gql`
   type CreateTweet {
     result: String
   }
+  type CreateUser {
+    result: String
+  }
   input inputEvent {
     title: String
     catchMessage: String
@@ -78,8 +93,13 @@ const typeDefs = gql`
   input inputTweet {
     hashtag: String
     name: String
+    uid: String
     text: String
     time: String
+  }
+  input inputUser {
+    uid: String
+    displayName: String
   }
 `;
 
@@ -94,8 +114,10 @@ const resolvers = {
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
+    createTweet: (_, { tweet }) => addTweet(tweet),
     createEvent: (_, { event }) => addEvent(event),
-    createTweet: (_, { tweet }) => addEvent(tweet),
+    createUser: (_, { user }) => addUser(user),
+    fetchUser: (_, { uid }) => fetchUser(uid),
   },
 };
 

@@ -2,11 +2,11 @@ const utils = require('./utils');
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'Tweets';
+const tableName = 'Users';
 
-const params = tweet => ({
+const params = user => ({
   TableName: tableName,
-  Item: { id: utils.generateId(), ...tweet, ...(!tweet.hashtag && { hashtag: 'none' }) },
+  Item: { ...user },
 });
 
 const put = params =>
@@ -14,9 +14,9 @@ const put = params =>
     console.log({ data }, { err });
   });
 
-async function main(tweet) {
+async function main(user) {
   try {
-    const response = await put(params(tweet)).promise();
+    await put(params(user)).promise();
     return { result: 'OK' };
   } catch (e) {
     console.log(e);
