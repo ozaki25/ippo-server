@@ -16,7 +16,7 @@ const typeDefs = gql`
     count: Int
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
-    tweets(hashtag: String, limit: Int, startId: String): [Tweet]
+    tweets(hashtag: String, limit: Int, startId: String): TweetList
   }
   type Mutation {
     registerNotification(token: String): Subscribe
@@ -51,6 +51,10 @@ const typeDefs = gql`
     hashtag: String
     startedAt: String
     endedAt: String
+  }
+  type TweetList {
+    tweetList: [Tweet]
+    startId: String
   }
   type Tweet {
     id: String
@@ -89,6 +93,7 @@ const typeDefs = gql`
   input inputTweet {
     hashtag: String
     name: String
+    uid: String
     text: String
     time: String
   }

@@ -5,10 +5,11 @@ const tableName = 'Tweets';
 
 const params = ({ limit = 10, desc = false, hashtag = 'none', startId = null }) => ({
   TableName: tableName,
-  KeyConditionExpression: startId ? 'hashtag = :hashtag and id < :id' : 'hashtag = :hashtag',
+  KeyConditionExpression:
+    startId === 'init' ? 'hashtag = :hashtag' : 'hashtag = :hashtag and id < :id',
   ExpressionAttributeValues: {
     ':hashtag': hashtag,
-    ...(startId ? { ':id': startId } : {}),
+    ...(startId === 'init' ? {} : { ':id': startId }),
   },
   ScanIndexForward: !desc,
   Limit: limit,
@@ -19,9 +20,12 @@ const query = params =>
     console.log({ data }, { err });
   });
 
-async function main({ hashtag, limit, startId }) {
-  const { Items } = await query(params({ hashtag, desc: true, limit, startId })).promise();
-  return Items;
+async function main({ hashtag, limit, startId = 'init' }) {
+  if (startId === '') return { tweetList: [], startId: '' };
+  const { Items, LastEvaluatedKey } = await query(
+    params({ hashtag, desc: true, limit, startId }),
+  ).promise();
+  return { tweetList: Items, startId: LastEvaluatedKey ? LastEvaluatedKey.id : '' };
 }
 
 module.exports = main;
