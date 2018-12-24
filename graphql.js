@@ -3,6 +3,7 @@ const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apol
 const addNotificationToken = require('./src/addNotificationToken');
 const addEvent = require('./src/addEvent');
 const addTweet = require('./src/addTweet');
+const addUser = require('./src/addUser');
 const fetchConnpassEvents = require('./src/fetchConnpassEvent');
 const fetchInternalEvents = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
@@ -21,6 +22,7 @@ const typeDefs = gql`
     publishNotification(target: String): Publish
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
+    createUser(user: inputUser): CreateUser
   }
   type Connpass {
     events: [Event]
@@ -55,6 +57,10 @@ const typeDefs = gql`
     text: String
     time: String
   }
+  type User {
+    id: String
+    name: String
+  }
   type Subscribe {
     result: String
   }
@@ -65,6 +71,9 @@ const typeDefs = gql`
     result: String
   }
   type CreateTweet {
+    result: String
+  }
+  type CreateUser {
     result: String
   }
   input inputEvent {
@@ -81,6 +90,10 @@ const typeDefs = gql`
     text: String
     time: String
   }
+  input inputUser {
+    id: String
+    name: String
+  }
 `;
 
 const resolvers = {
@@ -96,6 +109,7 @@ const resolvers = {
     publishNotification: (_, { target }) => publishNotification(target),
     createTweet: (_, { tweet }) => addTweet(tweet),
     createEvent: (_, { event }) => addEvent(event),
+    createUser: (_, { user }) => addUser(user),
   },
 };
 
