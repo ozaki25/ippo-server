@@ -1,20 +1,12 @@
 const AWS = require('aws-sdk');
+const utils = require('./utils');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'InternalEvents';
 
-const generateId = () =>
-  [...Array(8)]
-    .map(() =>
-      Math.random()
-        .toString(36)
-        .slice(-8),
-    )
-    .join('');
-
 const params = event => ({
   TableName: tableName,
-  Item: { id: generateId(), ...event },
+  Item: { ...event },
 });
 
 const put = params =>
@@ -24,8 +16,9 @@ const put = params =>
 
 async function main(event) {
   try {
-    const response = await put(params(event)).promise();
-    return { result: 'OK' };
+    const id = utils.generateId();
+    const response = await put(params({ ...event, id })).promise();
+    return { result: 'OK', id };
   } catch (e) {
     console.log(e);
     return { result: e.toString() };

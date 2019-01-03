@@ -2,6 +2,7 @@ const isLocal = process.env.LOCAL;
 const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apollo-server-lambda');
 const addNotificationToken = require('./src/addNotificationToken');
 const addEvent = require('./src/addEvent');
+const addOrganizedEvent = require('./src/addOrganizedEvent');
 const addTweet = require('./src/addTweet');
 const addUser = require('./src/addUser');
 const fetchConnpassEvents = require('./src/fetchConnpassEvent');
@@ -83,6 +84,8 @@ const typeDefs = gql`
     result: String
   }
   input inputEvent {
+    uid: String
+    name: String
     title: String
     catchMessage: String
     place: String
@@ -115,7 +118,12 @@ const resolvers = {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
     createTweet: (_, { tweet }) => addTweet(tweet),
-    createEvent: (_, { event }) => addEvent(event),
+    createEvent: async (_, { event }) => {
+      const { result, id } = await addEvent(event);
+      return result === 'OK'
+        ? await addOrganizedEvent({ eventid: id, uid: event.uid })
+        : { result };
+    },
     createUser: (_, { user }) => addUser(user),
     fetchUser: (_, { uid }) => fetchUser(uid),
   },
