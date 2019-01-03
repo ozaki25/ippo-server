@@ -20,7 +20,7 @@ async function main(user) {
     return { result: 'OK' };
   } catch (e) {
     console.log(e);
-    return { result: e };
+    return { result: e.toString() };
   }
 }
 
