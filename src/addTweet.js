@@ -20,7 +20,7 @@ async function main(tweet) {
     return { result: 'OK' };
   } catch (e) {
     console.log(e);
-    return { result: e };
+    return { result: e.toString() };
   }
 }
 

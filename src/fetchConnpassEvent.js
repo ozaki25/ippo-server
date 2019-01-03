@@ -15,7 +15,7 @@ async function main({ searchQuery, page, count }) {
     console.log({ searchQuery, page, count });
     return connpass.get(options({ keyword: searchQuery, start: (page - 1) * count + 1, count }));
   } catch (e) {
-    console.log(e);
+    console.log(e.toString());
   }
 }
 
