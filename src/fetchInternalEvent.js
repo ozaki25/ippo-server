@@ -1,20 +1,29 @@
+const utils = require('./utils');
 const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
+const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'InternalEvents';
 
-const params = {
+const params = hashtag => ({
   TableName: tableName,
-};
+  KeyConditionExpression: 'hashtag = :hashtag',
+  ExpressionAttributeValues: { ':hashtag': hashtag },
+  Limit: 1,
+});
 
-const scan = params =>
-  dynamo.scan(params, function(err, data) {
+const query = params =>
+  dynamo.query(params, function(err, data) {
     console.log({ data }, { err });
   });
 
-async function main() {
-  const { Items } = await scan(params).promise();
-  return Items;
+async function main({ hashtag }) {
+  try {
+    const { Items } = await query(params(hashtag)).promise();
+    return Items[0];
+  } catch (e) {
+    console.log(e);
+    return { result: e.toString() };
+  }
 }
 
 module.exports = main;

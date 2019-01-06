@@ -5,8 +5,9 @@ const addEvent = require('./src/addEvent');
 const addOrganizedEvent = require('./src/addOrganizedEvent');
 const addTweet = require('./src/addTweet');
 const addUser = require('./src/addUser');
-const fetchConnpassEvents = require('./src/fetchConnpassEvent');
-const fetchInternalEvents = require('./src/fetchInternalEvent');
+const fetchConnpassEvents = require('./src/fetchConnpassEvents');
+const fetchInternalEvents = require('./src/fetchInternalEvents');
+const fetchInternalEvent = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
 const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
@@ -17,6 +18,7 @@ const typeDefs = gql`
     count: Int
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
+    internalEvent(hashtag: String): InternalEvent
     tweets(hashtag: String, limit: Int, startId: String): TweetList
   }
   type Mutation {
@@ -112,6 +114,7 @@ const resolvers = {
     count: () => Math.floor(Math.random() * 10),
     connpass: (_, props) => fetchConnpassEvents(props),
     internalEvents: () => fetchInternalEvents(),
+    internalEvent: (_, props) => fetchInternalEvent(props),
     tweets: (_, props) => fetchTweets(props),
   },
   Mutation: {
