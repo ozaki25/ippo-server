@@ -54,6 +54,7 @@ const typeDefs = gql`
     hashtag: String
     startedAt: String
     endedAt: String
+    name: String
   }
   type TweetList {
     tweetList: [Tweet]
