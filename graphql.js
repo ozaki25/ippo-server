@@ -128,7 +128,7 @@ const resolvers = {
         fetchTweets(props),
         fetchInternalEvent(props),
       ]);
-      const joined = await fetchJoinedEvent({ uid: props.uid, eventid: event.id });
+      const joined = await fetchJoinedEvent({ userid: props.uid, eventid: event.id });
       return { tweetList, startId, event, joined: !!joined };
     },
   },
@@ -139,10 +139,10 @@ const resolvers = {
       const { text, uid, hashtag } = tweet;
       const join = utils.joinTweet(text);
       const leave = utils.leaveTweet(text);
-      const { id } = (join || leave) && (await fetchInternalEvent({ hashtag }));
+      const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
       const actions = [
-        join && addJoinedEvent({ uid, eventid: id }),
-        leave && removeJoinedEvent({ uid, eventid: id }),
+        join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
+        leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
         addTweet(tweet),
       ].filter(Boolean);
       const [result] = await Promise.all(actions);
@@ -151,7 +151,7 @@ const resolvers = {
     createEvent: async (_, { event }) => {
       const { result, id } = await addEvent(event);
       return result === 'OK'
-        ? await addOrganizedEvent({ eventid: id, uid: event.uid })
+        ? await addOrganizedEvent({ eventid: id, uerid: event.uid, ...event })
         : { result };
     },
     createUser: (_, { user }) => addUser(user),

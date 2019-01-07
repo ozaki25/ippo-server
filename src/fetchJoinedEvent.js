@@ -4,9 +4,9 @@ const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'JoinedEvents';
 
-const params = ({ eventid, uid }) => ({
+const params = ({ eventid, userid }) => ({
   TableName: tableName,
-  Key: { eventid, uid },
+  Key: { eventid, userid },
 });
 
 const get = params =>
@@ -14,9 +14,9 @@ const get = params =>
     console.log({ data }, { err });
   });
 
-async function main({ eventid, uid }) {
+async function main({ eventid, userid }) {
   try {
-    const { Item } = await get(params({ eventid, uid })).promise();
+    const { Item } = await get(params({ eventid, userid })).promise();
     return Item;
   } catch (e) {
     console.log(e);
