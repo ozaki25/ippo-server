@@ -7,6 +7,7 @@ const addTweet = require('./src/addTweet');
 const addUser = require('./src/addUser');
 const addJoinedEvent = require('./src/addJoinedEvent');
 const removeJoinedEvent = require('./src/removeJoinedEvent');
+const fetchJoinedEvent = require('./src/fetchJoinedEvent');
 const fetchConnpassEvents = require('./src/fetchConnpassEvents');
 const fetchInternalEvents = require('./src/fetchInternalEvents');
 const fetchInternalEvent = require('./src/fetchInternalEvent');
@@ -22,7 +23,7 @@ const typeDefs = gql`
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
     internalEvent(hashtag: String): InternalEvent
-    tweets(hashtag: String, limit: Int, startId: String): Tweets
+    tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
   }
   type Mutation {
     registerNotification(token: String): Subscribe
@@ -63,6 +64,7 @@ const typeDefs = gql`
     tweetList: [Tweet]
     startId: String
     event: InternalEvent
+    joined: Boolean
   }
   type Tweet {
     id: String
@@ -126,7 +128,8 @@ const resolvers = {
         fetchTweets(props),
         fetchInternalEvent(props),
       ]);
-      return { tweetList, startId, event };
+      const joined = await fetchJoinedEvent({ uid: props.uid, eventid: event.id });
+      return { tweetList, startId, event, joined: !!joined };
     },
   },
   Mutation: {
