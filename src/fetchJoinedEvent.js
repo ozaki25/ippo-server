@@ -6,20 +6,18 @@ const tableName = 'JoinedEvents';
 
 const params = ({ eventid, uid }) => ({
   TableName: tableName,
-  KeyConditionExpression: 'eventid = :eventid and uid = :uid',
-  ExpressionAttributeValues: { ':eventid': eventid, ':uid': uid },
-  Limit: 1,
+  Key: { eventid, uid },
 });
 
-const query = params =>
-  dynamo.query(params, function(err, data) {
+const get = params =>
+  dynamo.get(params, function(err, data) {
     console.log({ data }, { err });
   });
 
 async function main({ eventid, uid }) {
   try {
-    const { Items } = await query(params({ eventid, uid })).promise();
-    return Items[0];
+    const { Item } = await get(params({ eventid, uid })).promise();
+    return Item;
   } catch (e) {
     console.log(e);
     return { result: e.toString() };
