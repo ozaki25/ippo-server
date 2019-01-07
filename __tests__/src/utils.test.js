@@ -15,3 +15,41 @@ describe('#formattedYearAndMonth', () => {
     expect(actual).toMatchObject(expected);
   });
 });
+
+describe('#joinTweet', () => {
+  describe('キーワードを含まない場合', () => {
+    test('falseが返ること', () => {
+      const text = `テストツイートです
+      キーワードは含みません`;
+      const actual = utils.joinTweet(text);
+      expect(actual).toBe(false);
+    });
+  });
+  describe('キーワードを含む場合', () => {
+    test('trueが返ること', () => {
+      const text = `テストツイートです
+        参加します`;
+      const actual = utils.joinTweet(text);
+      expect(actual).toBe(true);
+    });
+  });
+});
+
+describe('#leaveTweet', () => {
+  describe('キーワードを含まない場合', () => {
+    test('falseが返ること', () => {
+      const text = `テストツイートです
+      キーワードは含みません`;
+      const actual = utils.leaveTweet(text);
+      expect(actual).toBe(false);
+    });
+  });
+  describe('キーワードを含む場合', () => {
+    test('trueが返ること', () => {
+      const text = `テストツイートです
+        キャンセルします`;
+      const actual = utils.leaveTweet(text);
+      expect(actual).toBe(true);
+    });
+  });
+});
