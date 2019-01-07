@@ -5,12 +5,15 @@ const addEvent = require('./src/addEvent');
 const addOrganizedEvent = require('./src/addOrganizedEvent');
 const addTweet = require('./src/addTweet');
 const addUser = require('./src/addUser');
+const addJoinedEvent = require('./src/addJoinedEvent');
+const removeJoinedEvent = require('./src/removeJoinedEvent');
 const fetchConnpassEvents = require('./src/fetchConnpassEvents');
 const fetchInternalEvents = require('./src/fetchInternalEvents');
 const fetchInternalEvent = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
 const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
+const utils = require('./src/utils');
 
 const typeDefs = gql`
   type Query {
@@ -64,6 +67,7 @@ const typeDefs = gql`
     id: String
     hashtag: String
     name: String
+    uid: String
     text: String
     time: String
   }
@@ -121,7 +125,19 @@ const resolvers = {
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
-    createTweet: (_, { tweet }) => addTweet(tweet),
+    createTweet: async (_, { tweet }) => {
+      const { text, uid, hashtag } = tweet;
+      const join = utils.joinTweet(text);
+      const leave = utils.leaveTweet(text);
+      const { id } = (join || leave) && (await fetchInternalEvent({ hashtag }));
+      const actions = [
+        join && addJoinedEvent({ uid, eventid: id }),
+        leave && removeJoinedEvent({ uid, eventid: id }),
+        addTweet(tweet),
+      ].filter(Boolean);
+      const [result] = await Promise.all(actions);
+      return result;
+    },
     createEvent: async (_, { event }) => {
       const { result, id } = await addEvent(event);
       return result === 'OK'
