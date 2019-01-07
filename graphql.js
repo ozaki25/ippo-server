@@ -22,7 +22,7 @@ const typeDefs = gql`
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
     internalEvent(hashtag: String): InternalEvent
-    tweets(hashtag: String, limit: Int, startId: String): TweetList
+    tweets(hashtag: String, limit: Int, startId: String): Tweets
   }
   type Mutation {
     registerNotification(token: String): Subscribe
@@ -59,9 +59,10 @@ const typeDefs = gql`
     endedAt: String
     name: String
   }
-  type TweetList {
+  type Tweets {
     tweetList: [Tweet]
     startId: String
+    event: InternalEvent
   }
   type Tweet {
     id: String
@@ -120,7 +121,13 @@ const resolvers = {
     connpass: (_, props) => fetchConnpassEvents(props),
     internalEvents: () => fetchInternalEvents(),
     internalEvent: (_, props) => fetchInternalEvent(props),
-    tweets: (_, props) => fetchTweets(props),
+    tweets: async (_, props) => {
+      const [{ tweetList, startId }, event] = await Promise.all([
+        fetchTweets(props),
+        fetchInternalEvent(props),
+      ]);
+      return { tweetList, startId, event };
+    },
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
