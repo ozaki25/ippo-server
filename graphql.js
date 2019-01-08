@@ -8,6 +8,8 @@ const addUser = require('./src/addUser');
 const addJoinedEvent = require('./src/addJoinedEvent');
 const removeJoinedEvent = require('./src/removeJoinedEvent');
 const fetchJoinedEvent = require('./src/fetchJoinedEvent');
+const fetchJoinedEvents = require('./src/fetchJoinedEvents');
+const fetchOrganizedEvents = require('./src/fetchOrganizedEvents');
 const fetchConnpassEvents = require('./src/fetchConnpassEvents');
 const fetchInternalEvents = require('./src/fetchInternalEvents');
 const fetchInternalEvent = require('./src/fetchInternalEvent');
@@ -23,6 +25,8 @@ const typeDefs = gql`
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
     internalEvent(hashtag: String): InternalEvent
+    joinedEvents(uid: String): [InternalEvent]
+    organizedEvents(uid: String): [InternalEvent]
     tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
   }
   type Mutation {
@@ -123,12 +127,14 @@ const resolvers = {
     connpass: (_, props) => fetchConnpassEvents(props),
     internalEvents: () => fetchInternalEvents(),
     internalEvent: (_, props) => fetchInternalEvent(props),
+    joinedEvents: (_, props) => fetchJoinedEvents({ userid: props.uid }),
+    organizedEvents: (_, props) => fetchOrganizedEvents({ userid: props.uid }),
     tweets: async (_, props) => {
       const [{ tweetList, startId }, event] = await Promise.all([
         fetchTweets(props),
         fetchInternalEvent(props),
       ]);
-      const joined = await fetchJoinedEvent({ uid: props.uid, eventid: event.id });
+      const joined = await fetchJoinedEvent({ userid: props.uid, eventid: event.id });
       return { tweetList, startId, event, joined: !!joined };
     },
   },
@@ -139,10 +145,10 @@ const resolvers = {
       const { text, uid, hashtag } = tweet;
       const join = utils.joinTweet(text);
       const leave = utils.leaveTweet(text);
-      const { id } = (join || leave) && (await fetchInternalEvent({ hashtag }));
+      const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
       const actions = [
-        join && addJoinedEvent({ uid, eventid: id }),
-        leave && removeJoinedEvent({ uid, eventid: id }),
+        join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
+        leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
         addTweet(tweet),
       ].filter(Boolean);
       const [result] = await Promise.all(actions);
@@ -151,7 +157,7 @@ const resolvers = {
     createEvent: async (_, { event }) => {
       const { result, id } = await addEvent(event);
       return result === 'OK'
-        ? await addOrganizedEvent({ eventid: id, uid: event.uid })
+        ? await addOrganizedEvent({ eventid: id, userid: event.uid, ...event })
         : { result };
     },
     createUser: (_, { user }) => addUser(user),

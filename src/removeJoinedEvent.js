@@ -3,9 +3,9 @@ const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'JoinedEvents';
 
-const params = ({ uid, eventid }) => ({
+const params = ({ userid, eventid }) => ({
   TableName: tableName,
-  Key: { uid, eventid },
+  Key: { userid, eventid },
 });
 
 const _delete = params =>
