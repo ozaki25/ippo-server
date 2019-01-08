@@ -157,7 +157,7 @@ const resolvers = {
     createEvent: async (_, { event }) => {
       const { result, id } = await addEvent(event);
       return result === 'OK'
-        ? await addOrganizedEvent({ eventid: id, uerid: event.uid, ...event })
+        ? await addOrganizedEvent({ eventid: id, userid: event.uid, ...event })
         : { result };
     },
     createUser: (_, { user }) => addUser(user),
