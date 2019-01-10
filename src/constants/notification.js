@@ -15,6 +15,10 @@ const destination = {
   to: `/topics/${topicName}`,
 };
 
+const registrationTokens = tokens => ({
+  registration_tokens: [...tokens],
+});
+
 const headersOption = {
   headers: {
     'Content-Type': 'application/json',
@@ -25,6 +29,19 @@ const headersOption = {
 const register = {
   url: token => `https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topicName}`,
   params: {},
+  options: {
+    ...headersOption,
+  },
+};
+
+const unregister = {
+  // こっちはtokenの無効化だから全topic解除される
+  // url: token => `https://iid.googleapis.com/v1/web/iid/${token}`,
+  url: token => `https://iid.googleapis.com/iid/v1:batchRemove`,
+  params: token => ({
+    ...destination,
+    ...registrationTokens([token]),
+  }),
   options: {
     ...headersOption,
   },
@@ -43,5 +60,6 @@ const publish = {
 
 module.exports = {
   register,
+  unregister,
   publish,
 };
