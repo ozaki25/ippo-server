@@ -32,7 +32,7 @@ const typeDefs = gql`
   }
   type Mutation {
     registerNotification(token: String): Subscribe
-    unregisterNotification(token: String): Subscribe
+    unregisterNotification(token: String): unSubscribe
     publishNotification(target: String): Publish
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
@@ -85,6 +85,9 @@ const typeDefs = gql`
     displayName: String
   }
   type Subscribe {
+    result: String
+  }
+  type Unsubscribe {
     result: String
   }
   type Publish {

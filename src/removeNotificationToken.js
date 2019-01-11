@@ -6,7 +6,6 @@ async function main(token) {
     unregister: { url, params, options },
   } = notification;
   try {
-    console.log(params(token));
     const res = await axios.post(url(token), params(token), options);
     return { result: res.statusText };
   } catch (e) {

@@ -11,7 +11,7 @@ const notificationContents = {
   },
 };
 
-const destination = {
+const topic = {
   to: `/topics/${topicName}`,
 };
 
@@ -39,7 +39,7 @@ const unregister = {
   // url: token => `https://iid.googleapis.com/v1/web/iid/${token}`,
   url: token => `https://iid.googleapis.com/iid/v1:batchRemove`,
   params: token => ({
-    ...destination,
+    ...topic,
     ...registrationTokens([token]),
   }),
   options: {
@@ -51,7 +51,7 @@ const publish = {
   url: 'https://fcm.googleapis.com/fcm/send',
   params: {
     ...notificationContents,
-    ...destination,
+    ...topic,
   },
   options: {
     ...headersOption,
