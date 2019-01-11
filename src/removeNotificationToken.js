@@ -3,10 +3,10 @@ const notification = require('./constants/notification');
 
 async function main(token) {
   const {
-    register: { url, params, options },
+    unregister: { url, params, options },
   } = notification;
   try {
-    const res = await axios.post(url(token), params, options);
+    const res = await axios.post(url(token), params(token), options);
     return { result: res.statusText };
   } catch (e) {
     console.log(e.toString());

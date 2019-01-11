@@ -1,6 +1,7 @@
 const isLocal = process.env.LOCAL;
 const { ApolloServer, gql } = isLocal ? require('apollo-server') : require('apollo-server-lambda');
 const addNotificationToken = require('./src/addNotificationToken');
+const removeNotificationToken = require('./src/removeNotificationToken');
 const addEvent = require('./src/addEvent');
 const addOrganizedEvent = require('./src/addOrganizedEvent');
 const addTweet = require('./src/addTweet');
@@ -31,6 +32,7 @@ const typeDefs = gql`
   }
   type Mutation {
     registerNotification(token: String): Subscribe
+    unregisterNotification(token: String): unSubscribe
     publishNotification(target: String): Publish
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
@@ -83,6 +85,9 @@ const typeDefs = gql`
     displayName: String
   }
   type Subscribe {
+    result: String
+  }
+  type Unsubscribe {
     result: String
   }
   type Publish {
@@ -140,6 +145,7 @@ const resolvers = {
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
+    unregisterNotification: (_, { token }) => removeNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
     createTweet: async (_, { tweet }) => {
       const { text, uid, hashtag } = tweet;
