@@ -17,6 +17,7 @@ const fetchInternalEvent = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
 const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
+const excuteUpdateExternalEvents = require('./src/excuteUpdateExternalEvents');
 const utils = require('./src/utils');
 
 const typeDefs = gql`
@@ -36,6 +37,7 @@ const typeDefs = gql`
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
     fetchUser(uid: String): User
+    excuteUpdateExternalEvents: String
   }
   type Connpass {
     events: [Event]
@@ -164,6 +166,7 @@ const resolvers = {
     },
     createUser: (_, { user }) => addUser(user),
     fetchUser: (_, { uid }) => fetchUser(uid),
+    excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
   },
 };
 
