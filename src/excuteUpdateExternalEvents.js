@@ -21,18 +21,17 @@ const put = params =>
 async function main() {
   try {
     const { events } = await fetchConnpassEvents({ page: 1, count: 100 });
-    const lastInsert = await fetchLastInsertExternalEvent({ key: 1 });
+    const lastInsert = (await fetchLastInsertExternalEvent({ key: 1 })) || '';
 
     let exists = false;
-    utils.formatConnpassEvents(events).forEach(event => {
-      if (exists) return;
-      if (event.connpassId === lastInsert.connpassId) {
-        exists = true;
-        return;
-      }
-      console.log('insert', event);
-      put(params({ ...event }));
-    });
+    const newEvents = events
+      .filter(event => {
+        if (event.event_id === lastInsert.connpassId) exists = true;
+        return !exists;
+      })
+      .reverse();
+
+    utils.formatConnpassEvents(newEvents).forEach(event => put(params({ ...event })));
     addLastInsertExternalEvent({ key: 1, connpassId: events[0].event_id });
   } catch (e) {
     console.log(e);
