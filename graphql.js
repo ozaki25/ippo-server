@@ -21,8 +21,6 @@ const utils = require('./src/utils');
 
 const typeDefs = gql`
   type Query {
-    hello: String
-    count: Int
     connpass(searchQuery: String, page: Int, count: Int): Connpass
     internalEvents: [InternalEvent]
     internalEvent(hashtag: String): InternalEvent
@@ -127,8 +125,6 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    hello: () => 'Hello World',
-    count: () => Math.floor(Math.random() * 10),
     connpass: (_, props) => fetchConnpassEvents(props),
     internalEvents: () => fetchInternalEvents(),
     internalEvent: (_, props) => fetchInternalEvent(props),
