@@ -11,21 +11,22 @@ const removeJoinedEvent = require('./src/removeJoinedEvent');
 const fetchJoinedEvent = require('./src/fetchJoinedEvent');
 const fetchJoinedEvents = require('./src/fetchJoinedEvents');
 const fetchOrganizedEvents = require('./src/fetchOrganizedEvents');
-const fetchConnpassEvents = require('./src/fetchConnpassEvents');
+const fetchExternalEvents = require('./src/fetchExternalEvents');
 const fetchInternalEvents = require('./src/fetchInternalEvents');
 const fetchInternalEvent = require('./src/fetchInternalEvent');
 const fetchTweets = require('./src/fetchTweets');
 const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
+const excuteUpdateExternalEvents = require('./src/excuteUpdateExternalEvents');
 const utils = require('./src/utils');
 
 const typeDefs = gql`
   type Query {
-    connpass(searchQuery: String, page: Int, count: Int): Connpass
-    internalEvents: [InternalEvent]
-    internalEvent(hashtag: String): InternalEvent
-    joinedEvents(uid: String): [InternalEvent]
-    organizedEvents(uid: String): [InternalEvent]
+    externalEvents: [Event]
+    internalEvents: [Event]
+    internalEvent(hashtag: String): Event
+    joinedEvents(uid: String): [Event]
+    organizedEvents(uid: String): [Event]
     tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
   }
   type Mutation {
@@ -36,27 +37,13 @@ const typeDefs = gql`
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
     fetchUser(uid: String): User
-  }
-  type Connpass {
-    events: [Event]
-    results_returned: Int
-    results_available: Int
-    results_start: Int
+    excuteUpdateExternalEvents: String
   }
   type Event {
-    event_id: Int
-    title: String
-    catch: String
-    description: String
-    event_url: String
-    address: String
-    place: String
-    started_at: String
-    ended_at: String
-  }
-  type InternalEvent {
     id: String
+    connpassId: Int
     title: String
+    eventUrl: String
     catchMessage: String
     place: String
     hashtag: String
@@ -67,7 +54,7 @@ const typeDefs = gql`
   type Tweets {
     tweetList: [Tweet]
     startId: String
-    event: InternalEvent
+    event: Event
     joined: Boolean
   }
   type Tweet {
@@ -125,7 +112,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    connpass: (_, props) => fetchConnpassEvents(props),
+    externalEvents: () => fetchExternalEvents(),
     internalEvents: () => fetchInternalEvents(),
     internalEvent: (_, props) => fetchInternalEvent(props),
     joinedEvents: (_, props) => fetchJoinedEvents({ userid: props.uid }),
@@ -164,6 +151,7 @@ const resolvers = {
     },
     createUser: (_, { user }) => addUser(user),
     fetchUser: (_, { uid }) => fetchUser(uid),
+    excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
   },
 };
 

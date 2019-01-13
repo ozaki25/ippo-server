@@ -15,11 +15,25 @@ const formattedYearAndMonth = ({ target, term }) =>
       .format('YYYYMM'),
   );
 
-const generateId = () => Date.now().toString();
+const generateId = () => process.hrtime().join('');
 
 const joinTweet = text => text.includes(tweet.JOIN_WORD);
 
 const leaveTweet = text => text.includes(tweet.LEAVE_WORD);
+
+const formatConnpassEvents = events =>
+  events
+    ? events.map(event => ({
+        id: generateId(),
+        connpassId: event.event_id,
+        title: event.title,
+        eventUrl: event.event_url,
+        catchMessage: event.catch,
+        place: event.place,
+        startedAt: event.started_at,
+        endedAt: event.ended_at,
+      }))
+    : [];
 
 module.exports = {
   formattedDates,
@@ -27,4 +41,5 @@ module.exports = {
   generateId,
   joinTweet,
   leaveTweet,
+  formatConnpassEvents,
 };
