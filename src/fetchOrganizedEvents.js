@@ -25,7 +25,10 @@ async function main({ userid, limit, startId = 'init' }) {
   const { Items, LastEvaluatedKey } = await query(
     params({ userid, desc: true, limit, startId }),
   ).promise();
-  return { items: Items, startId: LastEvaluatedKey ? LastEvaluatedKey.eventid : '' };
+  return {
+    items: Items.map(item => ({ ...item, id: item.eventid })),
+    startId: LastEvaluatedKey ? LastEvaluatedKey.eventid : '',
+  };
 }
 
 module.exports = main;
