@@ -98,6 +98,7 @@ const typeDefs = gql`
     catchMessage: String
     place: String
     hashtag: String
+    categories: String
     startedAt: String
     endedAt: String
   }
