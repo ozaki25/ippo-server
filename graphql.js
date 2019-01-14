@@ -112,6 +112,7 @@ const typeDefs = gql`
   input inputUser {
     uid: String
     displayName: String
+    categories: String
   }
 `;
 
