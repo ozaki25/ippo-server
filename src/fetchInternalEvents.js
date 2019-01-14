@@ -13,6 +13,7 @@ const scan = params =>
   });
 
 async function main({ limit }) {
+  // scanしてるのでデータ量増えたらパフォーマンス落ちる懸念有り
   const { Items } = await scan(params).promise();
   const sorted = Items.sort((a, b) => (a.id > b.id ? -1 : 1));
   return { items: limit ? sorted.slice(0, limit) : sorted };
