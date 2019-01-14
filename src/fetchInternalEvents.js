@@ -14,7 +14,8 @@ const scan = params =>
 
 async function main({ limit }) {
   const { Items } = await scan(params).promise();
-  return { items: limit ? Items.slice(0, limit) : Items };
+  const sorted = Items.sort((a, b) => (a.id > b.id ? -1 : 1));
+  return { items: limit ? sorted.slice(0, limit) : sorted };
 }
 
 module.exports = main;
