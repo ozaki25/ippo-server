@@ -6,6 +6,7 @@ const addEvent = require('./src/addEvent');
 const addOrganizedEvent = require('./src/addOrganizedEvent');
 const addTweet = require('./src/addTweet');
 const addUser = require('./src/addUser');
+const addCategorizedEvent = require('./src/addCategorizedEvent');
 const addJoinedEvent = require('./src/addJoinedEvent');
 const removeJoinedEvent = require('./src/removeJoinedEvent');
 const fetchJoinedEvent = require('./src/fetchJoinedEvent');
@@ -151,9 +152,15 @@ const resolvers = {
     },
     createEvent: async (_, { event }) => {
       const { result, id } = await addEvent(event);
-      return result === 'OK'
-        ? await addOrganizedEvent({ eventid: id, userid: event.uid, ...event })
-        : { result };
+      if (result !== 'OK') return { result };
+      const promises = event.categories
+        .split(',')
+        .map(category => addCategorizedEvent({ eventid: id, category, ...event }));
+      await Promise.all([
+        ...promises,
+        addOrganizedEvent({ eventid: id, userid: event.uid, ...event }),
+      ]);
+      return { result };
     },
     createUser: (_, { user }) => addUser(user),
     fetchUser: (_, { uid }) => fetchUser(uid),
