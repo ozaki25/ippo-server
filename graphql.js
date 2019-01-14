@@ -22,11 +22,11 @@ const utils = require('./src/utils');
 
 const typeDefs = gql`
   type Query {
-    externalEvents: [Event]
-    internalEvents: [Event]
+    externalEvents(limit: Int, startId: String): Events
+    internalEvents(limit: Int): Events
     internalEvent(hashtag: String): Event
-    joinedEvents(uid: String): [Event]
-    organizedEvents(uid: String): [Event]
+    joinedEvents(uid: String, limit: Int, startId: String): Events
+    organizedEvents(uid: String, limit: Int, startId: String): Events
     tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
   }
   type Mutation {
@@ -38,6 +38,10 @@ const typeDefs = gql`
     createUser(user: inputUser): CreateUser
     fetchUser(uid: String): User
     excuteUpdateExternalEvents: String
+  }
+  type Events {
+    items: [Event]
+    startId: String
   }
   type Event {
     id: String
@@ -112,11 +116,11 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    externalEvents: () => fetchExternalEvents(),
-    internalEvents: () => fetchInternalEvents(),
+    externalEvents: (_, props) => fetchExternalEvents(props),
+    internalEvents: (_, props) => fetchInternalEvents(props),
     internalEvent: (_, props) => fetchInternalEvent(props),
-    joinedEvents: (_, props) => fetchJoinedEvents({ userid: props.uid }),
-    organizedEvents: (_, props) => fetchOrganizedEvents({ userid: props.uid }),
+    joinedEvents: (_, props) => fetchJoinedEvents({ userid: props.uid, ...props }),
+    organizedEvents: (_, props) => fetchOrganizedEvents({ userid: props.uid, ...props }),
     tweets: async (_, props) => {
       const [{ tweetList, startId }, event] = await Promise.all([
         fetchTweets(props),

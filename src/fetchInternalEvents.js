@@ -12,9 +12,11 @@ const scan = params =>
     console.log({ data }, { err });
   });
 
-async function main() {
+async function main({ limit }) {
+  // scanしてるのでデータ量増えたらパフォーマンス落ちる懸念有り
   const { Items } = await scan(params).promise();
-  return Items;
+  const sorted = Items.sort((a, b) => (a.id > b.id ? -1 : 1));
+  return { items: limit ? sorted.slice(0, limit) : sorted };
 }
 
 module.exports = main;

@@ -10,7 +10,7 @@ const tableName = 'ExternalEvents';
 
 const params = event => ({
   TableName: tableName,
-  Item: { ...event },
+  Item: { keyValue: 'external', ...event },
 });
 
 const put = params =>
