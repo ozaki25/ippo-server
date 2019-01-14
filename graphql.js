@@ -23,7 +23,7 @@ const utils = require('./src/utils');
 const typeDefs = gql`
   type Query {
     externalEvents(limit: Int, startId: String): Events
-    internalEvents(limit: Int, startId: String): [Event]
+    internalEvents(limit: Int): Events
     internalEvent(hashtag: String): Event
     joinedEvents(uid: String, limit: Int, startId: String): Events
     organizedEvents(uid: String, limit: Int, startId: String): Events

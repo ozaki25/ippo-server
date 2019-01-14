@@ -12,9 +12,9 @@ const scan = params =>
     console.log({ data }, { err });
   });
 
-async function main() {
+async function main({ limit }) {
   const { Items } = await scan(params).promise();
-  return Items;
+  return { items: limit ? Items.slice(0, limit) : Items };
 }
 
 module.exports = main;
