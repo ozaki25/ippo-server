@@ -3,19 +3,17 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const tableName = 'ExternalEvents';
 
-const params = ({ limit = 10, desc = false, startId = 0 }) => {
-  return {
-    TableName: tableName,
-    KeyConditionExpression:
-      startId === 'init' ? 'keyValue = :keyValue' : 'keyValue = :keyValue and id < :id',
-    ScanIndexForward: !desc,
-    ExpressionAttributeValues: {
-      ':keyValue': 'external',
-      ...(startId === 'init' ? {} : { ':id': startId }),
-    },
-    Limit: limit,
-  };
-};
+const params = ({ limit = 10, desc = false, startId }) => ({
+  TableName: tableName,
+  KeyConditionExpression:
+    startId === 'init' ? 'keyValue = :keyValue' : 'keyValue = :keyValue and id < :id',
+  ScanIndexForward: !desc,
+  ExpressionAttributeValues: {
+    ':keyValue': 'external',
+    ...(startId === 'init' ? {} : { ':id': startId }),
+  },
+  Limit: limit,
+});
 
 const query = params =>
   dynamo.query(params, function(err, data) {

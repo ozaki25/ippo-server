@@ -3,10 +3,16 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const tableName = 'JoinedEvents';
 
-const params = ({ userid }) => ({
+const params = ({ userid, limit = 10, desc = false, startId }) => ({
   TableName: tableName,
-  KeyConditionExpression: 'userid = :userid',
-  ExpressionAttributeValues: { ':userid': userid },
+  KeyConditionExpression:
+    startId === 'init' ? 'userid = :userid' : 'userid = :userid and eventid < :eventid',
+  ScanIndexForward: !desc,
+  ExpressionAttributeValues: {
+    ':userid': userid,
+    ...(startId === 'init' ? {} : { ':eventid': startId }),
+  },
+  Limit: limit,
 });
 
 const query = params =>
@@ -14,10 +20,12 @@ const query = params =>
     console.log({ data }, { err });
   });
 
-async function main({ userid }) {
-  console.log(params({ userid }));
-  const { Items } = await query(params({ userid })).promise();
-  return Items;
+async function main({ userid, limit, startId = 'init' }) {
+  if (startId === '') return { items: [], startId: '' };
+  const { Items, LastEvaluatedKey } = await query(
+    params({ userid, desc: true, limit, startId }),
+  ).promise();
+  return { items: Items, startId: LastEvaluatedKey ? LastEvaluatedKey.eventid : '' };
 }
 
 module.exports = main;
