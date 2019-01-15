@@ -1,11 +1,17 @@
 const AWS = require('aws-sdk');
+const utils = require('./utils');
+
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
 const tableName = 'CategorizedEvents';
 
 const params = props => ({
   TableName: tableName,
-  Item: props,
+  Item: {
+    keyValue: 'categorized',
+    categoryEventId: utils.generateId(),
+    ...props,
+  },
 });
 
 const put = params =>
