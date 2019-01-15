@@ -15,7 +15,10 @@ const formattedYearAndMonth = ({ target, term }) =>
       .format('YYYYMM'),
   );
 
-const generateId = () => process.hrtime().join('');
+const generateId = () =>
+  [Date.now(), ...process.hrtime()]
+    .map((val, i) => (i === 0 ? val : `00000000000${val}`.slice(-9)))
+    .join('');
 
 const joinTweet = text => text.includes(tweet.JOIN_WORD);
 
