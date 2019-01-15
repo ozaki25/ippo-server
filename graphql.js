@@ -127,8 +127,13 @@ const resolvers = {
     joinedEvents: (_, props) => fetchJoinedEvents({ userid: props.uid, ...props }),
     organizedEvents: (_, props) => fetchOrganizedEvents({ userid: props.uid, ...props }),
     recommendedEvents: async (_, props) => {
-      const user = await fetchUser(props.uid);
-      return fetchCategorizedEvents({ categories: user.categories.split(','), ...props });
+      const { categories } = await fetchUser(props.uid);
+      return categories && categories.length
+        ? fetchCategorizedEvents({
+            categories: categories.split(','),
+            ...props,
+          })
+        : { items: [] };
     },
     tweets: async (_, props) => {
       const [{ tweetList, startId }, event] = await Promise.all([
