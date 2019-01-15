@@ -31,10 +31,14 @@ async function main() {
       })
       .reverse();
 
-    utils.formatConnpassEvents(newEvents).forEach(event => put(params({ ...event })));
-    addLastInsertExternalEvent({ key: 1, connpassId: events[0].event_id });
+    await Promise.all([
+      ...utils.formatConnpassEvents(newEvents).map(event => put(params({ ...event }))),
+      addLastInsertExternalEvent({ key: 1, connpassId: events[0].event_id }),
+    ]);
+    return 'success';
   } catch (e) {
     console.log(e);
+    return e.toString();
   }
 }
 
