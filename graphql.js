@@ -139,7 +139,7 @@ const resolvers = {
         async (_, props) => {
           const { categories } = await fetchUser(props.uid);
           return categories && categories.length
-            ? await fetchCategorizedEvents({
+            ? fetchCategorizedEvents({
                 categories: categories.split(','),
                 ...props,
               })
