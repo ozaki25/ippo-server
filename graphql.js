@@ -75,6 +75,7 @@ const typeDefs = gql`
   type User {
     uid: String
     displayName: String
+    categories: String
   }
   type Subscribe {
     result: String
