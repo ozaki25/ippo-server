@@ -31,6 +31,7 @@ const typeDefs = gql`
     organizedEvents(uid: String, limit: Int, startId: String): Events
     recommendedEvents(uid: String, limit: Int, startId: String): Events
     tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
+    fetchUser(uid: String): User
   }
   type Mutation {
     registerNotification(token: String): Subscribe
@@ -39,7 +40,6 @@ const typeDefs = gql`
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
-    fetchUser(uid: String): User
     excuteUpdateExternalEvents: String
   }
   type Events {
@@ -143,6 +143,7 @@ const resolvers = {
       const joined = await fetchJoinedEvent({ userid: props.uid, eventid: event.id });
       return { tweetList, startId, event, joined: !!joined };
     },
+    fetchUser: (_, { uid }) => fetchUser(uid),
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
@@ -174,7 +175,6 @@ const resolvers = {
       return { result };
     },
     createUser: (_, { user }) => addUser(user),
-    fetchUser: (_, { uid }) => fetchUser(uid),
     excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
   },
 };
