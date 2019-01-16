@@ -24,6 +24,7 @@ const utils = require('./src/utils');
 
 const typeDefs = gql`
   type Query {
+    allEvents(uid: String, limit: Int): AllEvents
     externalEvents(limit: Int, startId: String): Events
     internalEvents(limit: Int): Events
     internalEvent(hashtag: String): Event
@@ -41,6 +42,13 @@ const typeDefs = gql`
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
     excuteUpdateExternalEvents: String
+  }
+  type AllEvents {
+    joined: [Event]
+    recommended: [Event]
+    internal: [Event]
+    external: [Event]
+    organized: [Event]
   }
   type Events {
     items: [Event]
@@ -122,6 +130,30 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
+    allEvents: async (_, props) => {
+      const [joined, internal, external, organized, recommended] = await Promise.all([
+        fetchJoinedEvents({ userid: props.uid, ...props }),
+        fetchInternalEvents(props),
+        fetchExternalEvents(props),
+        fetchOrganizedEvents({ userid: props.uid, ...props }),
+        async (_, props) => {
+          const { categories } = await fetchUser(props.uid);
+          return categories && categories.length
+            ? await fetchCategorizedEvents({
+                categories: categories.split(','),
+                ...props,
+              })
+            : { items: [] };
+        },
+      ]);
+      return {
+        joined: joined.items,
+        internal: internal.items,
+        external: external.items,
+        organized: organized.items,
+        recommended: recommended.items,
+      };
+    },
     externalEvents: (_, props) => fetchExternalEvents(props),
     internalEvents: (_, props) => fetchInternalEvents(props),
     internalEvent: (_, props) => fetchInternalEvent(props),
