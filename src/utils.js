@@ -24,6 +24,11 @@ const joinTweet = text => text.includes(tweet.JOIN_WORD);
 
 const leaveTweet = text => text.includes(tweet.LEAVE_WORD);
 
+const detectHashtag = text => {
+  const result = text.match(tweet.HASHTAG);
+  return result ? result.map(t => t.replace(/#|\s/g, '')) : [];
+};
+
 const formatConnpassEvents = events =>
   events
     ? events.map(event => ({
@@ -44,5 +49,6 @@ module.exports = {
   generateId,
   joinTweet,
   leaveTweet,
+  detectHashtag,
   formatConnpassEvents,
 };
