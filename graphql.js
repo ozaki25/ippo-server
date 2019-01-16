@@ -136,15 +136,15 @@ const resolvers = {
         fetchInternalEvents(props),
         fetchExternalEvents(props),
         fetchOrganizedEvents({ userid: props.uid, ...props }),
-        async (_, props) => {
+        (async () => {
           const { categories } = await fetchUser(props.uid);
-          return categories && categories.length
+          return categories
             ? fetchCategorizedEvents({
                 categories: categories.split(','),
                 ...props,
               })
             : { items: [] };
-        },
+        })(),
       ]);
       return {
         joined: joined.items,
@@ -161,7 +161,7 @@ const resolvers = {
     organizedEvents: (_, props) => fetchOrganizedEvents({ userid: props.uid, ...props }),
     recommendedEvents: async (_, props) => {
       const { categories } = await fetchUser(props.uid);
-      return categories && categories.length
+      return categories
         ? fetchCategorizedEvents({
             categories: categories.split(','),
             ...props,
