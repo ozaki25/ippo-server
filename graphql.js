@@ -65,6 +65,7 @@ const typeDefs = gql`
     startedAt: String
     endedAt: String
     name: String
+    timestamp: String
   }
   type Tweets {
     tweetList: [Tweet]
