@@ -17,7 +17,8 @@ const put = params =>
 async function main(event) {
   try {
     const id = utils.generateId();
-    const response = await put(params({ ...event, id })).promise();
+    const timestamp = Date.now();
+    const response = await put(params({ ...event, id, timestamp })).promise();
     return { result: 'OK', id };
   } catch (e) {
     console.log(e);
