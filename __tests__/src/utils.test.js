@@ -54,7 +54,7 @@ describe('#leaveTweet', () => {
   });
 });
 
-describe.only('#detectHashtag', () => {
+describe('#detectHashtag', () => {
   describe('キーワードを含まない場合', () => {
     test('1件も返らないこと', () => {
       const text = `テストツイートです
