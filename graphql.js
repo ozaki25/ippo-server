@@ -116,7 +116,6 @@ const typeDefs = gql`
     endedAt: String
   }
   input inputTweet {
-    hashtag: String
     name: String
     uid: String
     text: String
@@ -174,7 +173,9 @@ const resolvers = {
         fetchTweets(props),
         fetchInternalEvent(props),
       ]);
-      const joined = await fetchJoinedEvent({ userid: props.uid, eventid: event.id });
+      const joined = event
+        ? await fetchJoinedEvent({ userid: props.uid, eventid: event.id })
+        : false;
       return { tweetList, startId, event, joined: !!joined };
     },
     fetchUser: (_, { uid }) => fetchUser(uid),
@@ -184,17 +185,27 @@ const resolvers = {
     unregisterNotification: (_, { token }) => removeNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
     createTweet: async (_, { tweet }) => {
-      const { text, uid, hashtag } = tweet;
+      const { text, uid } = tweet;
       const join = utils.joinTweet(text);
       const leave = utils.leaveTweet(text);
-      const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
-      const actions = [
-        join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
-        leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
-        addTweet(tweet),
-      ].filter(Boolean);
-      const [result] = await Promise.all(actions);
-      return result;
+      const hashtagList = utils.detectHashtag(text);
+      const list = hashtagList.length ? hashtagList : 'none';
+      try {
+        const actions = hashtagList.map(async hashtag => {
+          const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
+          await Promise.all(
+            [
+              join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
+              leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
+              addTweet({ ...tweet, hashtag }),
+            ].filter(Boolean),
+          );
+        });
+        await Promise.all(actions);
+        return { result: 'OK' };
+      } catch (e) {
+        return { result: e.toString() };
+      }
     },
     createEvent: async (_, { event }) => {
       const { result, id } = await addEvent(event);

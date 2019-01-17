@@ -54,7 +54,7 @@ describe('#leaveTweet', () => {
   });
 });
 
-describe.only('#detectHashtag', () => {
+describe('#detectHashtag', () => {
   describe('キーワードを含まない場合', () => {
     test('1件も返らないこと', () => {
       const text = `テストツイートです
@@ -85,6 +85,22 @@ describe.only('#detectHashtag', () => {
         const text = `テストツイートです
         #test
         キャンセルします`;
+        const actual = utils.detectHashtag(text);
+        expect(actual).toMatchObject(['test']);
+      });
+    });
+    describe('タグで開始する場合', () => {
+      test('1件が返ること', () => {
+        const text = `#test
+        テストツイート`;
+        const actual = utils.detectHashtag(text);
+        expect(actual).toMatchObject(['test']);
+      });
+    });
+    describe('タグで終了する場合', () => {
+      test('1件が返ること', () => {
+        const text = `テストツイート
+        テスト#test`;
         const actual = utils.detectHashtag(text);
         expect(actual).toMatchObject(['test']);
       });
