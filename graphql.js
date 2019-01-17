@@ -173,7 +173,9 @@ const resolvers = {
         fetchTweets(props),
         fetchInternalEvent(props),
       ]);
-      const joined = await fetchJoinedEvent({ userid: props.uid, eventid: event.id });
+      const joined = event
+        ? await fetchJoinedEvent({ userid: props.uid, eventid: event.id })
+        : false;
       return { tweetList, startId, event, joined: !!joined };
     },
     fetchUser: (_, { uid }) => fetchUser(uid),
