@@ -89,6 +89,22 @@ describe.only('#detectHashtag', () => {
         expect(actual).toMatchObject(['test']);
       });
     });
+    describe('タグで開始する場合', () => {
+      test('1件が返ること', () => {
+        const text = `#test
+        テストツイート`;
+        const actual = utils.detectHashtag(text);
+        expect(actual).toMatchObject(['test']);
+      });
+    });
+    describe('タグで終了する場合', () => {
+      test('1件が返ること', () => {
+        const text = `テストツイート
+        テスト#test`;
+        const actual = utils.detectHashtag(text);
+        expect(actual).toMatchObject(['test']);
+      });
+    });
     describe('複数該当する場合', () => {
       test('すべて返ること', () => {
         const text = `テストツイート#test_1 です
