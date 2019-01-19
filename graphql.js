@@ -16,6 +16,7 @@ const fetchCategorizedEvents = require('./src/fetchCategorizedEvents');
 const fetchExternalEvents = require('./src/fetchExternalEvents');
 const fetchInternalEvents = require('./src/fetchInternalEvents');
 const fetchInternalEvent = require('./src/fetchInternalEvent');
+const fetchTweet = require('./src/fetchTweet');
 const fetchTweets = require('./src/fetchTweets');
 const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
@@ -31,6 +32,7 @@ const typeDefs = gql`
     joinedEvents(uid: String, limit: Int, startId: String): Events
     organizedEvents(uid: String, limit: Int, startId: String): Events
     recommendedEvents(uid: String, limit: Int, startId: String): Events
+    tweet(hashtag: String, id: String): Tweet
     tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
     fetchUser(uid: String): User
   }
@@ -168,6 +170,7 @@ const resolvers = {
           })
         : { items: [] };
     },
+    tweet: (_, props) => fetchTweet(props),
     tweets: async (_, props) => {
       const [{ tweetList, startId }, event] = await Promise.all([
         fetchTweets(props),
