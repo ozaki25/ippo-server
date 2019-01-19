@@ -38,7 +38,7 @@ async function main() {
     return 'success';
   } catch (e) {
     console.log(e);
-    return e.toString();
+    return JSON.stringify(e);
   }
 }
 
