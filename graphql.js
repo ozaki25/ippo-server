@@ -16,6 +16,7 @@ const fetchCategorizedEvents = require('./src/fetchCategorizedEvents');
 const fetchExternalEvents = require('./src/fetchExternalEvents');
 const fetchInternalEvents = require('./src/fetchInternalEvents');
 const fetchInternalEvent = require('./src/fetchInternalEvent');
+const fetchTweet = require('./src/fetchTweet');
 const fetchTweets = require('./src/fetchTweets');
 const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
@@ -31,6 +32,7 @@ const typeDefs = gql`
     joinedEvents(uid: String, limit: Int, startId: String): Events
     organizedEvents(uid: String, limit: Int, startId: String): Events
     recommendedEvents(uid: String, limit: Int, startId: String): Events
+    tweet(hashtag: String, id: String): Tweet
     tweets(hashtag: String, limit: Int, startId: String, uid: String): Tweets
     fetchUser(uid: String): User
   }
@@ -80,6 +82,7 @@ const typeDefs = gql`
     uid: String
     text: String
     time: String
+    comments: [Tweet]
   }
   type User {
     uid: String
@@ -120,6 +123,8 @@ const typeDefs = gql`
     uid: String
     text: String
     time: String
+    parentId: String
+    parentHashtag: String
   }
   input inputUser {
     uid: String
@@ -168,6 +173,7 @@ const resolvers = {
           })
         : { items: [] };
     },
+    tweet: (_, props) => fetchTweet(props),
     tweets: async (_, props) => {
       const [{ tweetList, startId }, event] = await Promise.all([
         fetchTweets(props),
@@ -185,26 +191,35 @@ const resolvers = {
     unregisterNotification: (_, { token }) => removeNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
     createTweet: async (_, { tweet }) => {
-      const { text, uid } = tweet;
-      const join = utils.joinTweet(text);
-      const leave = utils.leaveTweet(text);
-      const hashtagList = utils.detectHashtag(text);
-      const list = hashtagList.length ? hashtagList : 'none';
-      try {
-        const actions = hashtagList.map(async hashtag => {
-          const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
-          await Promise.all(
-            [
-              join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
-              leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
-              addTweet({ ...tweet, hashtag }),
-            ].filter(Boolean),
-          );
+      const { text, uid, parentId, parentHashtag } = tweet;
+      if (parentId && parentHashtag) {
+        const parentTweet = await fetchTweet({ id: parentId, hashtag: parentHashtag });
+        const comments = parentTweet.comments || [];
+        return addTweet({
+          ...parentTweet,
+          comments: [...comments, { ...tweet, id: utils.generateId() }],
         });
-        await Promise.all(actions);
-        return { result: 'OK' };
-      } catch (e) {
-        return { result: e.toString() };
+      } else {
+        const join = utils.joinTweet(text);
+        const leave = utils.leaveTweet(text);
+        const hashtagList = utils.detectHashtag(text);
+        const list = hashtagList.length ? hashtagList : 'none';
+        try {
+          const actions = hashtagList.map(async hashtag => {
+            const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
+            await Promise.all(
+              [
+                join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
+                leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
+                addTweet({ ...tweet, hashtag }),
+              ].filter(Boolean),
+            );
+          });
+          await Promise.all(actions);
+          return { result: 'OK' };
+        } catch (e) {
+          return { result: e.toString() };
+        }
       }
     },
     createEvent: async (_, { event }) => {
