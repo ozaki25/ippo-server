@@ -148,10 +148,10 @@ const resolvers = {
         fetchExternalEvents(props),
         fetchOrganizedEvents({ userid: props.uid, ...props }),
         (async () => {
-          const { categories } = await fetchUser(props.uid);
-          return categories
+          const user = await fetchUser(props.uid);
+          return user && user.categories
             ? fetchCategorizedEvents({
-                categories: categories.split(','),
+                categories: user.categories.split(','),
                 ...props,
               })
             : { items: [] };
