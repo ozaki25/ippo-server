@@ -88,6 +88,12 @@ const typeDefs = gql`
     uid: String
     displayName: String
     categories: String
+    notifications: [Notification]
+  }
+  type Notification {
+    id: String
+    checked: Boolean
+    content: String
   }
   type Subscribe {
     result: String
@@ -234,7 +240,11 @@ const resolvers = {
       ]);
       return { result };
     },
-    createUser: (_, { user }) => addUser(user),
+    createUser: async (_, { user }) => {
+      const stored = await fetchUser(user.uid);
+      const notifications = stored ? stored.notifications : [{ id: '1', checked: false }];
+      return addUser({ ...user, notifications });
+    },
     excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
   },
 };
