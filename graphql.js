@@ -82,6 +82,7 @@ const typeDefs = gql`
     uid: String
     text: String
     time: String
+    comments: [Tweet]
   }
   type User {
     uid: String
@@ -194,7 +195,10 @@ const resolvers = {
       if (parentId && parentHashtag) {
         const parentTweet = await fetchTweet({ id: parentId, hashtag: parentHashtag });
         const comments = parentTweet.comments || [];
-        return addTweet({ ...parentTweet, comments: [...comments, tweet] });
+        return addTweet({
+          ...parentTweet,
+          comments: [...comments, { ...tweet, id: utils.generateId() }],
+        });
       } else {
         const join = utils.joinTweet(text);
         const leave = utils.leaveTweet(text);
