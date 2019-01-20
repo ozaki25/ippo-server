@@ -22,6 +22,7 @@ const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
 const excuteUpdateExternalEvents = require('./src/excuteUpdateExternalEvents');
 const utils = require('./src/utils');
+const notificationMessages = require('./src/constants/notificationMessages');
 
 const typeDefs = gql`
   type Query {
@@ -190,7 +191,17 @@ const resolvers = {
         : false;
       return { tweetList, startId, event, joined: !!joined };
     },
-    fetchUser: (_, { uid }) => fetchUser(uid),
+    fetchUser: async (_, { uid }) => {
+      const user = await fetchUser(uid);
+      const notifications = user.notifications
+        ? user.notifications.map(notification => ({
+            ...notification,
+            content: notificationMessages.find(message => message.id === notification.id).content,
+          }))
+        : [];
+      console.log(notifications);
+      return { ...user, notifications };
+    },
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
