@@ -122,6 +122,8 @@ const typeDefs = gql`
     uid: String
     text: String
     time: String
+    parentId: String
+    parentHashtag: String
   }
   input inputUser {
     uid: String
@@ -188,26 +190,32 @@ const resolvers = {
     unregisterNotification: (_, { token }) => removeNotificationToken(token),
     publishNotification: (_, { target }) => publishNotification(target),
     createTweet: async (_, { tweet }) => {
-      const { text, uid } = tweet;
-      const join = utils.joinTweet(text);
-      const leave = utils.leaveTweet(text);
-      const hashtagList = utils.detectHashtag(text);
-      const list = hashtagList.length ? hashtagList : 'none';
-      try {
-        const actions = hashtagList.map(async hashtag => {
-          const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
-          await Promise.all(
-            [
-              join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
-              leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
-              addTweet({ ...tweet, hashtag }),
-            ].filter(Boolean),
-          );
-        });
-        await Promise.all(actions);
-        return { result: 'OK' };
-      } catch (e) {
-        return { result: e.toString() };
+      const { text, uid, parentId, parentHashtag } = tweet;
+      if (parentId && parentHashtag) {
+        const parentTweet = await fetchTweet({ id: parentId, hashtag: parentHashtag });
+        const comments = parentTweet.comments || [];
+        return addTweet({ ...parentTweet, comments: [...comments, tweet] });
+      } else {
+        const join = utils.joinTweet(text);
+        const leave = utils.leaveTweet(text);
+        const hashtagList = utils.detectHashtag(text);
+        const list = hashtagList.length ? hashtagList : 'none';
+        try {
+          const actions = hashtagList.map(async hashtag => {
+            const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
+            await Promise.all(
+              [
+                join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
+                leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
+                addTweet({ ...tweet, hashtag }),
+              ].filter(Boolean),
+            );
+          });
+          await Promise.all(actions);
+          return { result: 'OK' };
+        } catch (e) {
+          return { result: e.toString() };
+        }
       }
     },
     createEvent: async (_, { event }) => {
