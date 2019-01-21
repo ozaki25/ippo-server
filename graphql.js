@@ -44,6 +44,7 @@ const typeDefs = gql`
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
+    readNotification(uid: String, notificationId: String): ReadNotification
     excuteUpdateExternalEvents: String
   }
   type AllEvents {
@@ -114,6 +115,9 @@ const typeDefs = gql`
     result: String
   }
   type CreateUser {
+    result: String
+  }
+  type ReadNotification {
     result: String
   }
   input inputEvent {
@@ -261,6 +265,12 @@ const resolvers = {
           ? stored.notifications
           : [{ id: '1', checked: false, timestamp: new Date().toString() }];
       return addUser({ ...user, notifications });
+    },
+    readNotification: async (_, { uid, notificationId }) => {
+      const user = await fetchUser(uid);
+      const index = user.notifications.findIndex(n => n.id === notificationId);
+      user.notifications[index].checked = true;
+      return addUser(user);
     },
     excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
   },
