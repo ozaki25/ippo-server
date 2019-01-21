@@ -95,6 +95,7 @@ const typeDefs = gql`
     id: String
     checked: Boolean
     content: String
+    timestamp: String
   }
   type Subscribe {
     result: String
@@ -253,7 +254,9 @@ const resolvers = {
     },
     createUser: async (_, { user }) => {
       const stored = await fetchUser(user.uid);
-      const notifications = stored ? stored.notifications : [{ id: '1', checked: false }];
+      const notifications = stored
+        ? stored.notifications
+        : [{ id: '1', checked: false, timestamp: new Date() }];
       return addUser({ ...user, notifications });
     },
     excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
