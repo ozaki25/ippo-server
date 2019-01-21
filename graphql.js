@@ -22,6 +22,7 @@ const fetchUser = require('./src/fetchUser');
 const publishNotification = require('./src/publishNotification');
 const excuteUpdateExternalEvents = require('./src/excuteUpdateExternalEvents');
 const utils = require('./src/utils');
+const notificationMessages = require('./src/constants/notificationMessages');
 
 const typeDefs = gql`
   type Query {
@@ -88,6 +89,13 @@ const typeDefs = gql`
     uid: String
     displayName: String
     categories: String
+    notifications: [Notification]
+  }
+  type Notification {
+    id: String
+    checked: Boolean
+    content: String
+    timestamp: String
   }
   type Subscribe {
     result: String
@@ -142,10 +150,10 @@ const resolvers = {
         fetchExternalEvents(props),
         fetchOrganizedEvents({ userid: props.uid, ...props }),
         (async () => {
-          const { categories } = await fetchUser(props.uid);
-          return categories
+          const user = await fetchUser(props.uid);
+          return user && user.categories
             ? fetchCategorizedEvents({
-                categories: categories.split(','),
+                categories: user.categories.split(','),
                 ...props,
               })
             : { items: [] };
@@ -184,7 +192,17 @@ const resolvers = {
         : false;
       return { tweetList, startId, event, joined: !!joined };
     },
-    fetchUser: (_, { uid }) => fetchUser(uid),
+    fetchUser: async (_, { uid }) => {
+      const user = await fetchUser(uid);
+      const notifications =
+        user && user.notifications
+          ? user.notifications.map(notification => ({
+              ...notification,
+              content: notificationMessages.find(message => message.id === notification.id).content,
+            }))
+          : [];
+      return { ...user, notifications };
+    },
   },
   Mutation: {
     registerNotification: (_, { token }) => addNotificationToken(token),
@@ -234,7 +252,14 @@ const resolvers = {
       ]);
       return { result };
     },
-    createUser: (_, { user }) => addUser(user),
+    createUser: async (_, { user }) => {
+      const stored = await fetchUser(user.uid);
+      const notifications =
+        stored && stored.notifications
+          ? stored.notifications
+          : [{ id: '1', checked: false, timestamp: new Date().toString() }];
+      return addUser({ ...user, notifications });
+    },
     excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
   },
 };
