@@ -94,6 +94,7 @@ const typeDefs = gql`
   type Notification {
     id: String
     checked: Boolean
+    title: String
     content: String
     timestamp: String
   }
@@ -198,6 +199,7 @@ const resolvers = {
         user && user.notifications
           ? user.notifications.map(notification => ({
               ...notification,
+              title: notificationMessages.find(message => message.id === notification.id).title,
               content: notificationMessages.find(message => message.id === notification.id).content,
             }))
           : [];
