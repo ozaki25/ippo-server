@@ -194,13 +194,13 @@ const resolvers = {
     },
     fetchUser: async (_, { uid }) => {
       const user = await fetchUser(uid);
-      const notifications = user.notifications
-        ? user.notifications.map(notification => ({
-            ...notification,
-            content: notificationMessages.find(message => message.id === notification.id).content,
-          }))
-        : [];
-      console.log(notifications);
+      const notifications =
+        user && user.notifications
+          ? user.notifications.map(notification => ({
+              ...notification,
+              content: notificationMessages.find(message => message.id === notification.id).content,
+            }))
+          : [];
       return { ...user, notifications };
     },
   },
@@ -254,9 +254,10 @@ const resolvers = {
     },
     createUser: async (_, { user }) => {
       const stored = await fetchUser(user.uid);
-      const notifications = stored
-        ? stored.notifications
-        : [{ id: '1', checked: false, timestamp: new Date() }];
+      const notifications =
+        stored && stored.notifications
+          ? stored.notifications
+          : [{ id: '1', checked: false, timestamp: new Date().toString() }];
       return addUser({ ...user, notifications });
     },
     excuteUpdateExternalEvents: () => excuteUpdateExternalEvents(),
