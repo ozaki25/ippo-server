@@ -16,6 +16,14 @@ describe('#formattedYearAndMonth', () => {
   });
 });
 
+describe('#generateId', () => {
+  test('31桁の乱数が生成されていること', () => {
+    const actual = utils.generateId();
+    const expected = 31;
+    expect(actual).toHaveLength(expected);
+  });
+});
+
 describe('#joinTweet', () => {
   describe('キーワードを含まない場合', () => {
     test('falseが返ること', () => {
@@ -120,6 +128,50 @@ describe('#detectHashtag', () => {
         const actual = utils.detectHashtag(text);
         expect(actual).toMatchObject(['test_1', 'test_2', 'test_3']);
       });
+    });
+  });
+});
+
+describe('#formatConnpassEvents', () => {
+  describe('値がある場合', () => {
+    test('フォーマットが変換されていること', () => {
+      const events = [
+        {
+          event_id: 117084,
+          title: 'Laravel初心者勉強会 最初の一歩を踏み出そう',
+          event_url: 'https://serakumedia.connpass.com/event/112699/',
+          catch:
+            'PHPフレームワーク Laravel の勉強会です シンプルなアプリをHerokuにデプロイするまで',
+          place: 'Impact Hub Tkyo',
+          started_at: '2019-02-20T19:30:00+09:00',
+          ended_at: '2019-01-25T21:45:00+09:00',
+        },
+      ];
+      const actual = utils.formatConnpassEvents(events);
+      const expected = [
+        {
+          // IDはランダムなので埋め込む
+          id: actual[0].id,
+          connpassId: 117084,
+          title: 'Laravel初心者勉強会 最初の一歩を踏み出そう',
+          eventUrl: 'https://serakumedia.connpass.com/event/112699/',
+          catchMessage:
+            'PHPフレームワーク Laravel の勉強会です シンプルなアプリをHerokuにデプロイするまで',
+          place: 'Impact Hub Tkyo',
+          endedAt: '2019-01-25T21:45:00+09:00',
+          startedAt: '2019-02-20T19:30:00+09:00',
+        },
+      ];
+      expect(actual).toEqual(expected);
+      expect(actual[0].id).toHaveLength(31);
+    });
+  });
+  describe('値がない場合', () => {
+    test('空の配列が返ること', () => {
+      const events = undefined;
+      const actual = utils.formatConnpassEvents(events);
+      const expected = [];
+      expect(actual).toEqual(expected);
     });
   });
 });
