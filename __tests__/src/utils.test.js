@@ -16,6 +16,14 @@ describe('#formattedYearAndMonth', () => {
   });
 });
 
+describe('#generateId', () => {
+  test('31桁の乱数が生成されていること', () => {
+    const actual = utils.generateId();
+    const expected = 31;
+    expect(actual.length).toBe(expected);
+  });
+});
+
 describe('#joinTweet', () => {
   describe('キーワードを含まない場合', () => {
     test('falseが返ること', () => {
