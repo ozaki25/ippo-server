@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const utils = require('./utils');
+const utils = require('../utils');
 
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 

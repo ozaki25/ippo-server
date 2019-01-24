@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const utils = require('./utils');
+const utils = require('../utils');
 const fetchConnpassEvents = require('./fetchConnpassEvents');
 const addLastInsertExternalEvent = require('./addLastInsertExternalEvent');
 const fetchLastInsertExternalEvent = require('./fetchLastInsertExternalEvent');
