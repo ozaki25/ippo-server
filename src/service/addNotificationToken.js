@@ -1,12 +1,12 @@
 const axios = require('axios');
-const notification = require('./constants/notification');
+const notification = require('../constants/notification');
 
 async function main(token) {
   const {
-    unregister: { url, params, options },
+    register: { url, params, options },
   } = notification;
   try {
-    const res = await axios.post(url(token), params(token), options);
+    const res = await axios.post(url(token), params, options);
     return { result: res.statusText };
   } catch (e) {
     console.log(e.toString());

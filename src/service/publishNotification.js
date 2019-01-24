@@ -1,5 +1,5 @@
 const axios = require('axios');
-const notification = require('./constants/notification');
+const notification = require('../constants/notification');
 
 async function main() {
   const {

@@ -1,12 +1,12 @@
-const utils = require('./utils');
+const utils = require('../utils');
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'Tweets';
+const tableName = 'JoinedEvents';
 
-const params = ({ hashtag, id }) => ({
+const params = ({ eventid, userid }) => ({
   TableName: tableName,
-  Key: { hashtag, id },
+  Key: { eventid, userid },
 });
 
 const get = params =>
@@ -14,9 +14,9 @@ const get = params =>
     console.log({ data }, { err });
   });
 
-async function main({ hashtag, id }) {
+async function main({ eventid, userid }) {
   try {
-    const { Item } = await get(params({ hashtag, id })).promise();
+    const { Item } = await get(params({ eventid, userid })).promise();
     return Item;
   } catch (e) {
     console.log(e);

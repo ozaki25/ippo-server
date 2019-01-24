@@ -1,5 +1,5 @@
 const connpass = require('connpass');
-const utils = require('./utils');
+const utils = require('../utils');
 
 const options = ({ keyword, start = 1, count = 10 }) => ({
   order: 3,
