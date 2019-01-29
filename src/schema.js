@@ -63,6 +63,7 @@ const typeDefs = gql`
     text: String
     time: String
     comments: [Tweet]
+    likes: [String]
   }
   type User {
     uid: String
