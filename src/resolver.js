@@ -142,6 +142,13 @@ const resolvers = {
           : [{ id: '1', checked: false, timestamp: new Date().toString() }];
       return addUser({ ...user, notifications });
     },
+    addLikeToTweet: async (_, { uid, hashtag, tweetid }) => {
+      const tweet = await fetchTweet({ hashtag, id: tweetid });
+      const { likes } = tweet;
+      const newLikes = likes ? [...likes, uid].filter((v, i, a) => a.indexOf(v) === i) : [uid];
+      const newTweet = { ...tweet, likes: newLikes };
+      return addTweet(newTweet);
+    },
     readNotification: async (_, { uid, notificationId }) => {
       const user = await fetchUser(uid);
       const index = user.notifications.findIndex(n => n.id === notificationId);
