@@ -21,6 +21,7 @@ const typeDefs = gql`
     createEvent(event: inputEvent): CreateEvent
     createTweet(tweet: inputTweet): CreateTweet
     createUser(user: inputUser): CreateUser
+    addLikeToTweet(uid: String, hashtag: String, tweetid: String): AddLikeToTweet
     readNotification(uid: String, notificationId: String): ReadNotification
     excuteUpdateExternalEvents: String
   }
@@ -92,6 +93,9 @@ const typeDefs = gql`
     result: String
   }
   type CreateUser {
+    result: String
+  }
+  type AddLikeToTweet {
     result: String
   }
   type ReadNotification {
