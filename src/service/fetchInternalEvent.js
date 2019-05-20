@@ -2,7 +2,7 @@ const utils = require('../utils');
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'InternalEvents';
+const tableName = 'IPPO_InternalEvents';
 
 const params = hashtag => ({
   TableName: tableName,

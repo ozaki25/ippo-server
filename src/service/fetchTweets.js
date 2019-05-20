@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-const tableName = 'Tweets';
+const tableName = 'IPPO_Tweets';
 
 const params = ({ limit = 10, desc = false, hashtag = 'none', startId = null }) => ({
   TableName: tableName,

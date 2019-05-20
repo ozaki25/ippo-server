@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-const tableName = 'ExternalEvents';
+const tableName = 'IPPO_ExternalEvents';
 
 const params = ({ limit = 10, desc = false, startId }) => ({
   TableName: tableName,

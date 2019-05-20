@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-const tableName = 'CategorizedEvents';
+const tableName = 'IPPO_CategorizedEvents';
 
 const params = ({ categories, limit = 10, desc = false, startId }) => {
   const categoryExpression = {};
