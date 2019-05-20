@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-const tableName = 'InternalEvents';
+const tableName = 'IPPO_InternalEvents';
 
 const params = {
   TableName: tableName,

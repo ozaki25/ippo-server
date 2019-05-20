@@ -2,7 +2,7 @@ const utils = require('../utils');
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'LastInsertExternalEvent';
+const tableName = 'IPPO_LastInsertExternalEvent';
 
 const params = props => ({
   TableName: tableName,

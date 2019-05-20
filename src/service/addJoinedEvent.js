@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'JoinedEvents';
+const tableName = 'IPPO_JoinedEvents';
 
 const params = props => ({
   TableName: tableName,

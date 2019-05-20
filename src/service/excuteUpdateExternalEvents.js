@@ -6,7 +6,7 @@ const fetchLastInsertExternalEvent = require('./fetchLastInsertExternalEvent');
 
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'ExternalEvents';
+const tableName = 'IPPO_ExternalEvents';
 
 const params = event => ({
   TableName: tableName,

@@ -2,7 +2,7 @@ const utils = require('../utils');
 const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
 
-const tableName = 'Users';
+const tableName = 'IPPO_Users';
 
 const params = user => ({
   TableName: tableName,
