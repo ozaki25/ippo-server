@@ -1,8 +1,11 @@
+tenant: ozaki25
+app: ippo-server
 service: ippo-server
 provider:
   name: aws
   runtime: nodejs8.10
   region: ap-northeast-1
+  profile: dev1
 functions:
   graphql:
     # this is formatted as <FILENAME>.<HANDLER>
@@ -12,3 +15,5 @@ functions:
           path: graphql
           method: post
           cors: true
+plugins:
+  - '@serverless/enterprise-plugin'
