@@ -15,5 +15,3 @@ functions:
           path: graphql
           method: post
           cors: true
-plugins:
-  - '@serverless/enterprise-plugin'
