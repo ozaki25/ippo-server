@@ -17,7 +17,6 @@
     "graphql": "^14.3.1"
   },
   "devDependencies": {
-    "@serverless/enterprise-plugin": "^1.0.5",
     "apollo-server": "^2.3.1",
     "jest": "^23.6.0"
   }
