@@ -1,5 +1,3 @@
-tenant: ozaki25
-app: ippo-server
 service: ippo-server
 provider:
   name: aws
