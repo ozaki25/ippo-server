@@ -25,7 +25,13 @@ const notificationMessages = require('./constants/notificationMessages');
 const resolvers = {
   Query: {
     allEvents: async (_, props) => {
-      const [joined, internal, external, organized, recommended] = await Promise.all([
+      const [
+        joined,
+        internal,
+        external,
+        organized,
+        recommended,
+      ] = await Promise.all([
         fetchJoinedEvents({ userid: props.uid, ...props }),
         fetchInternalEvents(props),
         fetchExternalEvents(props),
@@ -51,8 +57,10 @@ const resolvers = {
     externalEvents: (_, props) => fetchExternalEvents(props),
     internalEvents: (_, props) => fetchInternalEvents(props),
     internalEvent: (_, props) => fetchInternalEvent(props),
-    joinedEvents: (_, props) => fetchJoinedEvents({ userid: props.uid, ...props }),
-    organizedEvents: (_, props) => fetchOrganizedEvents({ userid: props.uid, ...props }),
+    joinedEvents: (_, props) =>
+      fetchJoinedEvents({ userid: props.uid, ...props }),
+    organizedEvents: (_, props) =>
+      fetchOrganizedEvents({ userid: props.uid, ...props }),
     recommendedEvents: async (_, props) => {
       const { categories } = await fetchUser(props.uid);
       return categories
@@ -79,11 +87,15 @@ const resolvers = {
         user && user.notifications
           ? user.notifications.map(notification => ({
               ...notification,
-              title: notificationMessages.find(message => message.id === notification.id).title,
-              content: notificationMessages.find(message => message.id === notification.id).content,
+              title: notificationMessages.find(
+                message => message.id === notification.id,
+              ).title,
+              content: notificationMessages.find(
+                message => message.id === notification.id,
+              ).content,
             }))
           : [];
-      return { ...user, notifications };
+      return { ...user, notifications, displayName: 'テスト 太郎' };
     },
   },
   Mutation: {
@@ -93,7 +105,10 @@ const resolvers = {
     createTweet: async (_, { tweet }) => {
       const { text, uid, parentId, parentHashtag } = tweet;
       if (parentId && parentHashtag) {
-        const parentTweet = await fetchTweet({ id: parentId, hashtag: parentHashtag });
+        const parentTweet = await fetchTweet({
+          id: parentId,
+          hashtag: parentHashtag,
+        });
         const comments = parentTweet.comments || [];
         return addTweet({
           ...parentTweet,
@@ -106,10 +121,12 @@ const resolvers = {
         const list = hashtagList.length ? hashtagList : 'none';
         try {
           const actions = hashtagList.map(async hashtag => {
-            const event = (join || leave) && (await fetchInternalEvent({ hashtag }));
+            const event =
+              (join || leave) && (await fetchInternalEvent({ hashtag }));
             await Promise.all(
               [
-                join && addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
+                join &&
+                  addJoinedEvent({ ...event, eventid: event.id, userid: uid }),
                 leave && removeJoinedEvent({ eventid: event.id, userid: uid }),
                 addTweet({ ...tweet, hashtag }),
               ].filter(Boolean),
@@ -127,7 +144,9 @@ const resolvers = {
       if (result !== 'OK') return { result };
       const promises = event.categories
         .split(',')
-        .map(category => addCategorizedEvent({ eventid: id, category, ...event }));
+        .map(category =>
+          addCategorizedEvent({ eventid: id, category, ...event }),
+        );
       await Promise.all([
         ...promises,
         addOrganizedEvent({ eventid: id, userid: event.uid, ...event }),
@@ -145,7 +164,9 @@ const resolvers = {
     addLikeToTweet: async (_, { uid, hashtag, tweetid }) => {
       const tweet = await fetchTweet({ hashtag, id: tweetid });
       const { likes } = tweet;
-      const newLikes = likes ? [...likes, uid].filter((v, i, a) => a.indexOf(v) === i) : [uid];
+      const newLikes = likes
+        ? [...likes, uid].filter((v, i, a) => a.indexOf(v) === i)
+        : [uid];
       const newTweet = { ...tweet, likes: newLikes };
       return addTweet(newTweet);
     },
