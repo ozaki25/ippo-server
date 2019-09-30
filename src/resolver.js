@@ -95,7 +95,7 @@ const resolvers = {
               ).content,
             }))
           : [];
-      return { ...user, notifications, displayName: 'テスト 太郎' };
+      return { ...user, notifications };
     },
   },
   Mutation: {
