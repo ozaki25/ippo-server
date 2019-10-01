@@ -95,7 +95,7 @@ const resolvers = {
               ).content,
             }))
           : [];
-      return { ...user, notifications, displayName: '小林 諒祐' };
+      return { ...user, notifications };
     },
   },
   Mutation: {
