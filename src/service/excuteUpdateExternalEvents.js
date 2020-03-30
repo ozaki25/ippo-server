@@ -31,6 +31,8 @@ async function main() {
       })
       .reverse();
 
+    console.log({ newEventsLength: newEvents.length });
+
     await Promise.all([
       ...utils.formatConnpassEvents(newEvents).map(event => put(params({ ...event }))),
       addLastInsertExternalEvent({ key: 1, connpassId: events[0].event_id }),
